@@ -1,0 +1,43 @@
+
+<?php
+
+/**
+* Controller Generate without Module page
+ */
+namespace App\Http\Controllers\LA;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Http\Requests;
+use Mail;
+use Log;
+
+class MiscellaneousController extends Controller
+{
+    /**
+	 * Display a listing Different Miscellanous Functionality
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function index()
+	{
+		
+    }
+    
+    public function showEmailTest()
+    {
+        return view('miscellaneous.testemailform');
+    }
+
+    public function sendEmailTest(Request $request)
+    {
+        $host = Setting::getByKey('Email_HOST');
+        if(isset($host) && !empty($host))
+        {
+            Mail::send('miscellaneous.testemail', [], function ($m) use ($request) {
+                $m->from(Setting::getByKey('Email_From'), Setting::getByKey('Email_From_Alias'));
+                $m->to($request->email, '')->subject(Setting::getBykey('Testing'));
+            });
+        }
+    }
+}
