@@ -8,7 +8,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use Dwij\Laraadmin\Models\Module;
 
-class CreateOrganizationsTable extends Migration
+class CreateBudgetsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -17,20 +17,8 @@ class CreateOrganizationsTable extends Migration
      */
     public function up()
     {
-        Module::generate("Organizations", 'organizations', 'name', 'fa-university', [
-            ["name", "Name", "Name", true, "", 5, 250, true],
-            ["email", "Email", "Email", true, "", 0, 250, false],
-            ["phone", "Phone", "Mobile", false, "", 10, 10, true],
-            ["website", "Website", "URL", false, "http://", 0, 250, false],
-            ["country", "Country", "Dropdown", false, "", 0, 0, true, "@countries"],
-            ["state", "State", "Dropdown", false, "", 0, 0, true, "@states"],
-            ["city", "City", "Dropdown", false, "", 0, 250, true, "@cities"],
-            ["address", "Address", "Address", false, "", 0, 1000, true],
-            ["assigned_to", "Assigned to", "Dropdown", false, "0", 0, 0, false, "@employees"],
-            ["connect_since", "Connected Since", "Date", false, "date('Y-m-d')", 0, 0, false],
-            ["description", "Description", "Textarea", false, "", 0, 1000, false],
-            ["profile_image", "Profile Image", "Image", false, "", 0, 250, false],
-            ["profile", "Company Profile", "File", false, "", 0, 250, false],
+        Module::generate("Budgets", 'budgets', 'title', 'fa-money', [
+            ["title", "Title", "String", false, "", 1, 50, true],
         ]);
 		
 		/*
@@ -76,8 +64,8 @@ class CreateOrganizationsTable extends Migration
      */
     public function down()
     {
-        if (Schema::hasTable('organizations')) {
-            Schema::drop('organizations');
+        if (Schema::hasTable('budgets')) {
+            Schema::drop('budgets');
         }
     }
 }

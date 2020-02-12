@@ -70,6 +70,8 @@ Route::group(['as' => $as, 'middleware' => ['auth', '2fa', 'permission:ADMIN_PAN
 	/* ================== Organizations ================== */
 	Route::resource(config('laraadmin.adminRoute') . '/organizations', 'LA\OrganizationsController');
 	Route::get(config('laraadmin.adminRoute') . '/organization_dt_ajax', 'LA\OrganizationsController@dtajax');
+	Route::post(config('laraadmin.adminRoute') . '/getStates', 'LA\OrganizationsController@getState');
+	Route::post(config('laraadmin.adminRoute') . '/getCity', 'LA\OrganizationsController@getCity');
 
 	/* ================== Backups ================== */
 	Route::resource(config('laraadmin.adminRoute') . '/backups', 'LA\BackupsController');
@@ -135,4 +137,12 @@ Route::group(['as' => $as, 'middleware' => ['auth', '2fa', 'permission:ADMIN_PAN
 	/* ================== Position_Levels ================== */
 	Route::resource(config('laraadmin.adminRoute') . '/position_levels', 'LA\Position_LevelsController');
 	Route::get(config('laraadmin.adminRoute') . '/position_level_dt_ajax', 'LA\Position_LevelsController@dtajax');
+
+	/* ================== Budgets ================== */
+	Route::resource(config('laraadmin.adminRoute') . '/budgets', 'LA\BudgetsController');
+	Route::get(config('laraadmin.adminRoute') . '/budget_dt_ajax', 'LA\BudgetsController@dtajax');
+
+	/* ================== Positions ================== */
+	Route::resource(config('laraadmin.adminRoute') . '/positions', 'LA\PositionsController');
+	Route::get(config('laraadmin.adminRoute') . '/position_dt_ajax', 'LA\PositionsController@dtajax');
 });

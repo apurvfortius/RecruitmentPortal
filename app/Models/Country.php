@@ -18,7 +18,6 @@ class Country extends Model
 	protected $hidden = [
         
     ];
-	protected $primaryKey = 'countryID';
 
 	protected $guarded = [];
 

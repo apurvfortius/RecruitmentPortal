@@ -17,37 +17,37 @@ use Collective\Html\FormFacade as Form;
 use Dwij\Laraadmin\Models\Module;
 use Dwij\Laraadmin\Models\ModuleFields;
 
-use App\Models\Country;
+use App\Models\Budget;
 
-class CountriesController extends Controller
+class BudgetsController extends Controller
 {
 	public $show_action = true;
-	public $view_col = 'countryName';
-	public $listing_cols = ['id', 'countryID', 'countryName', 'localName', 'webCode', 'region', 'continent', 'latitude', 'longitude', 'surfaceArea', 'population'];
+	public $view_col = 'title';
+	public $listing_cols = ['id', 'title'];
 	
 	public function __construct() {
 		// Field Access of Listing Columns
 		if(\Dwij\Laraadmin\Helpers\LAHelper::laravel_ver() == 5.3) {
 			$this->middleware(function ($request, $next) {
-				$this->listing_cols = ModuleFields::listingColumnAccessScan('Countries', $this->listing_cols);
+				$this->listing_cols = ModuleFields::listingColumnAccessScan('Budgets', $this->listing_cols);
 				return $next($request);
 			});
 		} else {
-			$this->listing_cols = ModuleFields::listingColumnAccessScan('Countries', $this->listing_cols);
+			$this->listing_cols = ModuleFields::listingColumnAccessScan('Budgets', $this->listing_cols);
 		}
 	}
 	
 	/**
-	 * Display a listing of the Countries.
+	 * Display a listing of the Budgets.
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
 	public function index()
 	{
-		$module = Module::get('Countries');
+		$module = Module::get('Budgets');
 		
 		if(Module::hasAccess($module->id)) {
-			return View('la.countries.index', [
+			return View('la.budgets.index', [
 				'show_actions' => $this->show_action,
 				'listing_cols' => $this->listing_cols,
 				'module' => $module
@@ -58,7 +58,7 @@ class CountriesController extends Controller
 	}
 
 	/**
-	 * Show the form for creating a new country.
+	 * Show the form for creating a new budget.
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
@@ -68,16 +68,16 @@ class CountriesController extends Controller
 	}
 
 	/**
-	 * Store a newly created country in database.
+	 * Store a newly created budget in database.
 	 *
 	 * @param  \Illuminate\Http\Request  $request
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(Request $request)
 	{
-		if(Module::hasAccess("Countries", "create")) {
+		if(Module::hasAccess("Budgets", "create")) {
 		
-			$rules = Module::validateRules("Countries", $request);
+			$rules = Module::validateRules("Budgets", $request);
 			
 			$validator = Validator::make($request->all(), $rules);
 			
@@ -85,9 +85,9 @@ class CountriesController extends Controller
 				return redirect()->back()->withErrors($validator)->withInput();
 			}
 			
-			$insert_id = Module::insert("Countries", $request);
+			$insert_id = Module::insert("Budgets", $request);
 			
-			return redirect()->route(config('laraadmin.adminRoute') . '.countries.index');
+			return redirect()->route(config('laraadmin.adminRoute') . '.budgets.index');
 			
 		} else {
 			return redirect(config('laraadmin.adminRoute')."/");
@@ -95,30 +95,30 @@ class CountriesController extends Controller
 	}
 
 	/**
-	 * Display the specified country.
+	 * Display the specified budget.
 	 *
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
 	public function show($id)
 	{
-		if(Module::hasAccess("Countries", "view")) {
+		if(Module::hasAccess("Budgets", "view")) {
 			
-			$country = Country::find($id);
-			if(isset($country->id)) {
-				$module = Module::get('Countries');
-				$module->row = $country;
+			$budget = Budget::find($id);
+			if(isset($budget->id)) {
+				$module = Module::get('Budgets');
+				$module->row = $budget;
 				
-				return view('la.countries.show', [
+				return view('la.budgets.show', [
 					'module' => $module,
 					'view_col' => $this->view_col,
 					'no_header' => true,
 					'no_padding' => "no-padding"
-				])->with('country', $country);
+				])->with('budget', $budget);
 			} else {
 				return view('errors.404', [
 					'record_id' => $id,
-					'record_name' => ucfirst("country"),
+					'record_name' => ucfirst("budget"),
 				]);
 			}
 		} else {
@@ -127,28 +127,28 @@ class CountriesController extends Controller
 	}
 
 	/**
-	 * Show the form for editing the specified country.
+	 * Show the form for editing the specified budget.
 	 *
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
 	public function edit($id)
 	{
-		if(Module::hasAccess("Countries", "edit")) {			
-			$country = Country::find($id);
-			if(isset($country->id)) {	
-				$module = Module::get('Countries');
+		if(Module::hasAccess("Budgets", "edit")) {			
+			$budget = Budget::find($id);
+			if(isset($budget->id)) {	
+				$module = Module::get('Budgets');
 				
-				$module->row = $country;
+				$module->row = $budget;
 				
-				return view('la.countries.edit', [
+				return view('la.budgets.edit', [
 					'module' => $module,
 					'view_col' => $this->view_col,
-				])->with('country', $country);
+				])->with('budget', $budget);
 			} else {
 				return view('errors.404', [
 					'record_id' => $id,
-					'record_name' => ucfirst("country"),
+					'record_name' => ucfirst("budget"),
 				]);
 			}
 		} else {
@@ -157,7 +157,7 @@ class CountriesController extends Controller
 	}
 
 	/**
-	 * Update the specified country in storage.
+	 * Update the specified budget in storage.
 	 *
 	 * @param  \Illuminate\Http\Request  $request
 	 * @param  int  $id
@@ -165,9 +165,9 @@ class CountriesController extends Controller
 	 */
 	public function update(Request $request, $id)
 	{
-		if(Module::hasAccess("Countries", "edit")) {
+		if(Module::hasAccess("Budgets", "edit")) {
 			
-			$rules = Module::validateRules("Countries", $request, true);
+			$rules = Module::validateRules("Budgets", $request, true);
 			
 			$validator = Validator::make($request->all(), $rules);
 			
@@ -175,9 +175,9 @@ class CountriesController extends Controller
 				return redirect()->back()->withErrors($validator)->withInput();;
 			}
 			
-			$insert_id = Module::updateRow("Countries", $request, $id);
+			$insert_id = Module::updateRow("Budgets", $request, $id);
 			
-			return redirect()->route(config('laraadmin.adminRoute') . '.countries.index');
+			return redirect()->route(config('laraadmin.adminRoute') . '.budgets.index');
 			
 		} else {
 			return redirect(config('laraadmin.adminRoute')."/");
@@ -185,18 +185,18 @@ class CountriesController extends Controller
 	}
 
 	/**
-	 * Remove the specified country from storage.
+	 * Remove the specified budget from storage.
 	 *
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
 	public function destroy($id)
 	{
-		if(Module::hasAccess("Countries", "delete")) {
-			Country::find($id)->delete();
+		if(Module::hasAccess("Budgets", "delete")) {
+			Budget::find($id)->delete();
 			
 			// Redirecting to index() method
-			return redirect()->route(config('laraadmin.adminRoute') . '.countries.index');
+			return redirect()->route(config('laraadmin.adminRoute') . '.budgets.index');
 		} else {
 			return redirect(config('laraadmin.adminRoute')."/");
 		}
@@ -209,11 +209,11 @@ class CountriesController extends Controller
 	 */
 	public function dtajax()
 	{
-		$values = DB::table('countries')->select($this->listing_cols)->whereNull('deleted_at');
+		$values = DB::table('budgets')->select($this->listing_cols)->whereNull('deleted_at');
 		$out = Datatables::of($values)->make();
 		$data = $out->getData();
 
-		$fields_popup = ModuleFields::getModuleFields('Countries');
+		$fields_popup = ModuleFields::getModuleFields('Budgets');
 		
 		for($i=0; $i < count($data->data); $i++) {
 			for ($j=0; $j < count($this->listing_cols); $j++) { 
@@ -222,7 +222,7 @@ class CountriesController extends Controller
 					$data->data[$i][$j] = ModuleFields::getFieldValue($fields_popup[$col], $data->data[$i][$j]);
 				}
 				if($col == $this->view_col) {
-					$data->data[$i][$j] = '<a href="'.url(config('laraadmin.adminRoute') . '/countries/'.$data->data[$i][0]).'">'.$data->data[$i][$j].'</a>';
+					$data->data[$i][$j] = '<a href="'.url(config('laraadmin.adminRoute') . '/budgets/'.$data->data[$i][0]).'">'.$data->data[$i][$j].'</a>';
 				}
 				// else if($col == "author") {
 				//    $data->data[$i][$j];
@@ -231,12 +231,12 @@ class CountriesController extends Controller
 			
 			if($this->show_action) {
 				$output = '';
-				if(Module::hasAccess("Countries", "edit")) {
-					$output .= '<a href="'.url(config('laraadmin.adminRoute') . '/countries/'.$data->data[$i][0].'/edit').'" class="btn btn-warning btn-xs" style="display:inline;padding:2px 5px 3px 5px;"><i class="fa fa-edit"></i></a>';
+				if(Module::hasAccess("Budgets", "edit")) {
+					$output .= '<a href="'.url(config('laraadmin.adminRoute') . '/budgets/'.$data->data[$i][0].'/edit').'" class="btn btn-warning btn-xs" style="display:inline;padding:2px 5px 3px 5px;"><i class="fa fa-edit"></i></a>';
 				}
 				
-				if(Module::hasAccess("Countries", "delete")) {
-					$output .= Form::open(['route' => [config('laraadmin.adminRoute') . '.countries.destroy', $data->data[$i][0]], 'method' => 'delete', 'style'=>'display:inline']);
+				if(Module::hasAccess("Budgets", "delete")) {
+					$output .= Form::open(['route' => [config('laraadmin.adminRoute') . '.budgets.destroy', $data->data[$i][0]], 'method' => 'delete', 'style'=>'display:inline']);
 					$output .= ' <button class="btn btn-danger btn-xs" type="submit"><i class="fa fa-times"></i></button>';
 					$output .= Form::close();
 				}

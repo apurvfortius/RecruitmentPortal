@@ -1,7 +1,7 @@
 <?php
 /**
  * Controller genrated using LaraAdmin
- * Help: http://laraadmin.com
+ * Help: Contact Sagar Upadhyay (usagar80@gmail.com)
  */
 
 namespace App\Http\Controllers\LA;
@@ -18,12 +18,15 @@ use Dwij\Laraadmin\Models\Module;
 use Dwij\Laraadmin\Models\ModuleFields;
 
 use App\Models\Organization;
+use App\Models\Country;
+use App\Models\State;
+use App\Models\City;
 
 class OrganizationsController extends Controller
 {
 	public $show_action = true;
 	public $view_col = 'name';
-	public $listing_cols = ['id', 'profile_image', 'name', 'email', 'phone', 'website', 'assigned_to', 'city'];
+	public $listing_cols = ['id', 'name', 'email', 'phone', 'website', 'country', 'state', 'city', 'address', 'assigned_to', 'connect_since', 'description', 'profile_image', 'profile'];
 	
 	public function __construct() {
 		// Field Access of Listing Columns
@@ -134,11 +137,9 @@ class OrganizationsController extends Controller
 	 */
 	public function edit($id)
 	{
-		if(Module::hasAccess("Organizations", "edit")) {
+		if(Module::hasAccess("Organizations", "edit")) {			
 			$organization = Organization::find($id);
-			if(isset($organization->id)) {
-				$organization = Organization::find($id);
-				
+			if(isset($organization->id)) {	
 				$module = Module::get('Organizations');
 				
 				$module->row = $organization;
@@ -218,20 +219,8 @@ class OrganizationsController extends Controller
 		$fields_popup = ModuleFields::getModuleFields('Organizations');
 		
 		for($i=0; $i < count($data->data); $i++) {
-			for ($j=0; $j < count($this->listing_cols); $j++) {
+			for ($j=0; $j < count($this->listing_cols); $j++) { 
 				$col = $this->listing_cols[$j];
-				if($fields_popup[$col] != null && $fields_popup[$col]->field_type_str == "Image") {
-					if($data->data[$i][$j] != 0) {
-						$img = \App\Models\Upload::find($data->data[$i][$j]);
-						if(isset($img->name)) {
-							$data->data[$i][$j] = '<img src="'.$img->path().'?s=50">';
-						} else {
-							$data->data[$i][$j] = "";
-						}
-					} else {
-						$data->data[$i][$j] = "";
-					}
-				}
 				if($fields_popup[$col] != null && starts_with($fields_popup[$col]->popup_vals, "@")) {
 					$data->data[$i][$j] = ModuleFields::getFieldValue($fields_popup[$col], $data->data[$i][$j]);
 				}
@@ -259,5 +248,30 @@ class OrganizationsController extends Controller
 		}
 		$out->setData($data);
 		return $out;
+	}
+
+	public function getState(Request $request)
+	{
+		$id = Country::find($request->id);
+		$result = State::where('countryID', $id->countryID)->get();
+
+		$out = '';
+		foreach($result as $item){
+			$out .= "<option value=".$item->id.">".$item->stateName."</option>";
+		}
+		return $out;
+		//return $out = Form::select('state', $result, $default_val, $params);
+	}
+
+	public function getCity(Request $request)
+	{
+		$result = City::where('stateID', $request->id)->get();
+
+		$out = '';
+		foreach($result as $item){
+			$out .= "<option value=".$item->id.">".$item->cityName."</option>";
+		}
+		return $out;
+		//return $out = Form::select('state', $result, $default_val, $params);
 	}
 }

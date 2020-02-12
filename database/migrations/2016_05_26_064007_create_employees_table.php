@@ -1,7 +1,7 @@
 <?php
 /**
  * Migration genrated using LaraAdmin
- * Help: http://laraadmin.com
+ * Help: Contact Sagar Upadhyay (usagar80@gmail.com)
  */
 
 use Illuminate\Database\Schema\Blueprint;
@@ -17,15 +17,19 @@ class CreateEmployeesTable extends Migration
      */
     public function up()
     {
-        Module::generate("Employees", 'employees', 'dept', 'fa-group', [
+        Module::generate("Employees", 'employees', 'name', 'fa-group', [
             ["name", "Name", "Name", false, "", 5, 250, true],
             ["gender", "Gender", "Radio", false, "Male", 0, 0, true, ["Male","Female"]],
             ["mobile", "Mobile", "Mobile", false, "", 10, 20, true],
             ["email", "Email", "Email", true, "", 5, 250, true],
-            ["city", "City", "String", false, "", 0, 50, false],
-            ["address", "Address", "Address", false, "", 0, 1000, false],
+            ["city", "City", "Dropdown", false, "", 0, 50, true, "@cities"],
+            ["crnt_address", "Present Address", "Address", false, "", 0, 1000, false],
             ["date_hire", "Hiring Date", "Date", false, "date('Y-m-d')", 0, 0, false],
             ["date_left", "Resignation Date", "Date", false, "1990-01-01", 0, 0, false],
+            ["employee_code", "Employe Code", "String", true, "", 0, 256, true],
+            ["country_id", "Country", "Dropdown", false, "", 0, 0, true, "@countries"],
+            ["state_id", "State", "Dropdown", false, "", 0, 0, true, "@states"],
+            ["pr_address", "Permanent Address", "Address", false, "", 0, 1000, true],
         ]);
 		
 		/*

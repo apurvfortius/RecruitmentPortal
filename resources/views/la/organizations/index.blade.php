@@ -1,7 +1,7 @@
 @extends("la.layouts.app")
 
 @section("contentheader_title", "Organizations")
-@section("contentheader_description", "organizations listing")
+@section("contentheader_description", "Organizations listing")
 @section("section", "Organizations")
 @section("sub_section", "Listing")
 @section("htmlheader_title", "Organizations Listing")
@@ -56,21 +56,37 @@
 			{!! Form::open(['action' => 'LA\OrganizationsController@store', 'id' => 'organization-add-form']) !!}
 			<div class="modal-body">
 				<div class="box-body">
-                    @la_form($module)
+					{{-- @la_form($module) --}}
 					
-					{{--
+					
 					@la_input($module, 'name')
 					@la_input($module, 'email')
 					@la_input($module, 'phone')
 					@la_input($module, 'website')
+					
+					@la_input($module, 'country')
+					<div class="form-group">
+						<label for="state">State* :</label>
+						<select class="form-control" required="1" data-placeholder="Select State" rel="select2" name="state" id="state">
+							<option value="">Select State</option>
+						</select>
+					</div>
+
+					<div class="form-group">
+						<label for="city">City* :</label>
+						<select class="form-control" required="1" data-placeholder="Select City" rel="select2" name="city" id="city">
+							<option value="">Select City</option>
+						</select>
+					</div>
+					{{-- @la_input($module, 'state')
+					@la_input($module, 'city') --}}
+					@la_input($module, 'address')
 					@la_input($module, 'assigned_to')
 					@la_input($module, 'connect_since')
-					@la_input($module, 'address')
-					@la_input($module, 'city')
 					@la_input($module, 'description')
 					@la_input($module, 'profile_image')
 					@la_input($module, 'profile')
-					--}}
+					
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -110,5 +126,41 @@ $(function () {
 		
 	});
 });
+</script>
+<script>
+	$( "select[name='country']" ).change(function () {
+		var str = "";
+		$( "select[name='country'] option:selected" ).each(function() {
+		  str += $( this ).val() + " ";
+		});
+
+		$.ajax({
+			url : "{{ url(config('laraadmin.adminRoute') . '/getStates') }}",
+			method:"post",
+			data : {"_token": "{{ csrf_token() }}", id: str },
+			success: function(data){
+				$('#state').html(data);
+				console.log(data);
+			}
+		});
+	}).change();
+</script>
+
+<script>
+	$( "select[name='state']" ).change(function () {
+		var str = "";
+		$( "select[name='state'] option:selected" ).each(function() {
+		  str += $( this ).val() + " ";
+		});
+
+		$.ajax({
+			url : "{{ url(config('laraadmin.adminRoute') . '/getCity') }}",
+			method:"post",
+			data : {"_token": "{{ csrf_token() }}", id: str },
+			success: function(data){
+				$('#city').html(data);
+			}
+		});
+	}).change();
 </script>
 @endpush

@@ -1,7 +1,7 @@
 <?php
 /**
  * Model genrated using LaraAdmin
- * Help: http://laraadmin.com
+ * Help: Contact Sagar Upadhyay (usagar80@gmail.com)
  */
 
 namespace App\Models;
@@ -9,11 +9,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-use App\Traits\EmployeeTrait;
-
 class Employee extends Model
 {
-    use SoftDeletes, EmployeeTrait;
+    use SoftDeletes;
 	
 	protected $table = 'employees';
 	

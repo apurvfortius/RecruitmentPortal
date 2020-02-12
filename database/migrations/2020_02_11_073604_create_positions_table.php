@@ -8,7 +8,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use Dwij\Laraadmin\Models\Module;
 
-class CreateOrganizationsTable extends Migration
+class CreatePositionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -17,20 +17,32 @@ class CreateOrganizationsTable extends Migration
      */
     public function up()
     {
-        Module::generate("Organizations", 'organizations', 'name', 'fa-university', [
-            ["name", "Name", "Name", true, "", 5, 250, true],
-            ["email", "Email", "Email", true, "", 0, 250, false],
-            ["phone", "Phone", "Mobile", false, "", 10, 10, true],
-            ["website", "Website", "URL", false, "http://", 0, 250, false],
-            ["country", "Country", "Dropdown", false, "", 0, 0, true, "@countries"],
-            ["state", "State", "Dropdown", false, "", 0, 0, true, "@states"],
-            ["city", "City", "Dropdown", false, "", 0, 250, true, "@cities"],
-            ["address", "Address", "Address", false, "", 0, 1000, true],
-            ["assigned_to", "Assigned to", "Dropdown", false, "0", 0, 0, false, "@employees"],
-            ["connect_since", "Connected Since", "Date", false, "date('Y-m-d')", 0, 0, false],
-            ["description", "Description", "Textarea", false, "", 0, 1000, false],
-            ["profile_image", "Profile Image", "Image", false, "", 0, 250, false],
-            ["profile", "Company Profile", "File", false, "", 0, 250, false],
+        Module::generate("Positions", 'positions', 'title', 'fa-bolt', [
+            ["position_code", "Position Code", "String", true, "", 1, 50, true],
+            ["company_id", "Company", "Dropdown", false, "", 0, 0, true, "@organizations"],
+            ["title", "Name", "String", false, "", 1, 255, true],
+            ["position_level", "Level", "Dropdown", false, "", 0, 0, true, "@position_levels"],
+            ["industry_id", "Industry", "Dropdown", false, "", 0, 0, true, "@industries"],
+            ["department_id", "Department", "Dropdown", false, "", 0, 0, true, "@departments"],
+            ["sub_department_id", "Sub Department", "Dropdown", false, "", 0, 0, false, "@sub_departments"],
+            ["report_to", "Report To", "String", false, "", 1, 255, false],
+            ["team_size", "Approx Team Size", "String", false, "", 1, 255, false],
+            ["location", "Location", "Dropdown", false, "", 0, 0, true, "@cities"],
+            ["budget_id", "Budget", "Dropdown", false, "", 0, 0, true, "@budgets"],
+            ["qualification_ug", "Qualification (UG)", "Dropdown", false, "", 0, 0, true, "@qualification_ugs"],
+            ["qualification_pg", "Qualification (PG)", "Dropdown", false, "", 0, 0, true, "@qualification_pgs"],
+            ["no_position", "No. of Positions", "Integer", false, "1", 0, 11, true],
+            ["req_exp_id", "Required Experience", "Dropdown", false, "", 0, 0, true, "@experiences"],
+            ["urgency_pos", "Urgency of Position", "Dropdown", false, "", 0, 0, true, ["Yes","No"]],
+            ["buy_out", "Buy Out", "Radio", false, "", 0, 0, true, ["Yes","No"]],
+            ["com_turnover", "Company Turnover", "Dropdown", false, "", 0, 0, false, ["100000","200000"]],
+            ["emp_strength", "Employee Strength", "Dropdown", false, "", 0, 0, false, ["0 to 25","26 to 100","100 to 250","251 to 500"]],
+            ["jd_available", "JD Available", "Radio", false, "", 0, 0, false, ["Yes","No"]],
+            ["website", "Website", "URL", false, "", 0, 256, true],
+            ["pos_date", "Postion Date", "Date", false, "", 0, 0, true],
+            ["job_description", "Job Desciption", "Textarea", false, "", 0, 0, false],
+            ["pos_given_by", "Position Given By", "String", false, "", 1, 255, true],
+            ["pos_assign_to", "Position Assigned To", "Dropdown", false, "", 0, 0, true, "@employees"],
         ]);
 		
 		/*
@@ -76,8 +88,8 @@ class CreateOrganizationsTable extends Migration
      */
     public function down()
     {
-        if (Schema::hasTable('organizations')) {
-            Schema::drop('organizations');
+        if (Schema::hasTable('positions')) {
+            Schema::drop('positions');
         }
     }
 }

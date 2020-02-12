@@ -32,11 +32,10 @@ class EmployeesController extends Controller
 	public $show_action = true;
 	public $module = 'Employee';
 	public $view_col = 'name';
-	public $listing_cols = ['id', 'name', 'mobile', 'email'];
-	public $selectcols_cols = ['id', 'name', 'mobile', 'email'];
-	
-	public function __construct() {
-		
+	public $listing_cols = ['id', 'employee_code', 'name', 'gender', 'mobile', 'email', 'present_address', 'permanent_address'];
+	public $selectcols_cols = ['id', 'employee_code', 'name', 'gender', 'mobile', 'email', 'present_address', 'permanent_address'];
+
+	public function __construct() {		
 		// Field Access of Listing Columns
 		if(\Dwij\Laraadmin\Helpers\LAHelper::laravel_ver() == 5.3) {
 			$this->middleware(function ($request, $next) {
@@ -293,9 +292,9 @@ class EmployeesController extends Controller
 		for($i=0; $i < count($data->data); $i++) {
 			for ($j=0; $j < count($this->listing_cols); $j++) { 
 				$col = $this->listing_cols[$j];
-				if($fields_popup[$col] != null && starts_with($fields_popup[$col]->popup_vals, "@")) {
-					$data->data[$i][$j] = ModuleFields::getFieldValue($fields_popup[$col], $data->data[$i][$j]);
-				}
+				// if($fields_popup[$col] != null && starts_with($fields_popup[$col]->popup_vals, "@")) {
+				// 	$data->data[$i][$j] = ModuleFields::getFieldValue($fields_popup[$col], $data->data[$i][$j]);
+				// }
 				if($col == $this->view_col) {
 					$data->data[$i][$j] = '<a href="'.url(config('laraadmin.adminRoute') . '/employees/'.$data->data[$i][0]).'">'.$data->data[$i][$j].'</a>';
 				}
