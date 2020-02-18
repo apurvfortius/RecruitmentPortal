@@ -8,7 +8,7 @@
 
 @section("headerElems")
 @la_access("Cities", "create")
-	<button class="btn btn-success btn-sm pull-right" data-toggle="modal" data-target="#AddModal">Add City</button>
+	<a class="btn btn-success btn-sm pull-right" href="{{ url('admin/cities/create') }}" >Add City</a>
 @endla_access
 @endsection
 

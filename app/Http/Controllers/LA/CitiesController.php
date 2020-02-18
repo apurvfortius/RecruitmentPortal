@@ -23,7 +23,7 @@ class CitiesController extends Controller
 {
 	public $show_action = true;
 	public $view_col = 'cityName';
-	public $listing_cols = ['cityID', 'cityName', 'stateID', 'countryID', 'latitude', 'longitude'];
+	public $listing_cols = ['id', 'cityName', 'countryID', 'stateID', 'latitude', 'longitude'];
 	
 	public function __construct() {
 		// Field Access of Listing Columns
@@ -64,7 +64,18 @@ class CitiesController extends Controller
 	 */
 	public function create()
 	{
-		//
+		if(Module::hasAccess("Cities", "create")) {			
+			$module = Module::get('Cities');
+			
+			$module->row = $city;
+			
+			return view('la.cities.create', [
+				'module' => $module,
+				'view_col' => $this->view_col,
+			]);
+		} else {
+			return redirect(config('laraadmin.adminRoute')."/");
+		}
 	}
 
 	/**

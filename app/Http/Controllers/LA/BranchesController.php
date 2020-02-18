@@ -17,40 +17,40 @@ use Collective\Html\FormFacade as Form;
 use Dwij\Laraadmin\Models\Module;
 use Dwij\Laraadmin\Models\ModuleFields;
 
-use App\Models\Organization;
+use App\Models\Branch;
 use App\Models\Country;
 use App\Models\State;
 use App\Models\City;
 
-class OrganizationsController extends Controller
+class BranchesController extends Controller
 {
 	public $show_action = true;
-	public $view_col = 'name';
-	public $listing_cols = ['id', 'name', 'email', 'phone', 'website', 'country', 'state', 'city', 'address', 'assigned_to', 'connect_since', 'description', 'profile_image', 'profile'];
+	public $view_col = 'company_id';
+	public $listing_cols = ['id', 'company_id', 'type', 'country_id', 'state_id', 'city_id', 'address', 'contact_persopn', 'mobile', 'telephone', 'email'];
 	
 	public function __construct() {
 		// Field Access of Listing Columns
 		if(\Dwij\Laraadmin\Helpers\LAHelper::laravel_ver() == 5.3) {
 			$this->middleware(function ($request, $next) {
-				$this->listing_cols = ModuleFields::listingColumnAccessScan('Organizations', $this->listing_cols);
+				$this->listing_cols = ModuleFields::listingColumnAccessScan('Branches', $this->listing_cols);
 				return $next($request);
 			});
 		} else {
-			$this->listing_cols = ModuleFields::listingColumnAccessScan('Organizations', $this->listing_cols);
+			$this->listing_cols = ModuleFields::listingColumnAccessScan('Branches', $this->listing_cols);
 		}
 	}
 	
 	/**
-	 * Display a listing of the Organizations.
+	 * Display a listing of the Branches.
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
 	public function index()
 	{
-		$module = Module::get('Organizations');
+		$module = Module::get('Branches');
 		
 		if(Module::hasAccess($module->id)) {
-			return View('la.organizations.index', [
+			return View('la.branches.index', [
 				'show_actions' => $this->show_action,
 				'listing_cols' => $this->listing_cols,
 				'module' => $module
@@ -61,26 +61,35 @@ class OrganizationsController extends Controller
 	}
 
 	/**
-	 * Show the form for creating a new organization.
+	 * Show the form for creating a new branch.
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
 	public function create()
 	{
-		//
+		if(Module::hasAccess("Branches", "edit")) {			
+			$module = Module::get('Branches');
+			
+			return view('la.branches.create', [
+				'module' => $module,
+				'view_col' => $this->view_col,
+			]);
+		} else {
+			return redirect(config('laraadmin.adminRoute')."/");
+		}
 	}
 
 	/**
-	 * Store a newly created organization in database.
+	 * Store a newly created branch in database.
 	 *
 	 * @param  \Illuminate\Http\Request  $request
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(Request $request)
 	{
-		if(Module::hasAccess("Organizations", "create")) {
+		if(Module::hasAccess("Branches", "create")) {
 		
-			$rules = Module::validateRules("Organizations", $request);
+			$rules = Module::validateRules("Branches", $request);
 			
 			$validator = Validator::make($request->all(), $rules);
 			
@@ -88,9 +97,9 @@ class OrganizationsController extends Controller
 				return redirect()->back()->withErrors($validator)->withInput();
 			}
 			
-			$insert_id = Module::insert("Organizations", $request);
+			$insert_id = Module::insert("Branches", $request);
 			
-			return redirect()->route(config('laraadmin.adminRoute') . '.organizations.index');
+			return redirect()->route(config('laraadmin.adminRoute') . '.branches.index');
 			
 		} else {
 			return redirect(config('laraadmin.adminRoute')."/");
@@ -98,30 +107,30 @@ class OrganizationsController extends Controller
 	}
 
 	/**
-	 * Display the specified organization.
+	 * Display the specified branch.
 	 *
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
 	public function show($id)
 	{
-		if(Module::hasAccess("Organizations", "view")) {
+		if(Module::hasAccess("Branches", "view")) {
 			
-			$organization = Organization::find($id);
-			if(isset($organization->id)) {
-				$module = Module::get('Organizations');
-				$module->row = $organization;
+			$branch = Branch::find($id);
+			if(isset($branch->id)) {
+				$module = Module::get('Branches');
+				$module->row = $branch;
 				
-				return view('la.organizations.show', [
+				return view('la.branches.show', [
 					'module' => $module,
 					'view_col' => $this->view_col,
 					'no_header' => true,
 					'no_padding' => "no-padding"
-				])->with('organization', $organization);
+				])->with('branch', $branch);
 			} else {
 				return view('errors.404', [
 					'record_id' => $id,
-					'record_name' => ucfirst("organization"),
+					'record_name' => ucfirst("branch"),
 				]);
 			}
 		} else {
@@ -130,28 +139,28 @@ class OrganizationsController extends Controller
 	}
 
 	/**
-	 * Show the form for editing the specified organization.
+	 * Show the form for editing the specified branch.
 	 *
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
 	public function edit($id)
 	{
-		if(Module::hasAccess("Organizations", "edit")) {			
-			$organization = Organization::find($id);
-			if(isset($organization->id)) {	
-				$module = Module::get('Organizations');
+		if(Module::hasAccess("Branches", "edit")) {			
+			$branch = Branch::find($id);
+			if(isset($branch->id)) {	
+				$module = Module::get('Branches');
 				
-				$module->row = $organization;
+				$module->row = $branch;
 				
-				return view('la.organizations.edit', [
+				return view('la.branches.edit', [
 					'module' => $module,
 					'view_col' => $this->view_col,
-				])->with('organization', $organization);
+				])->with('branch', $branch);
 			} else {
 				return view('errors.404', [
 					'record_id' => $id,
-					'record_name' => ucfirst("organization"),
+					'record_name' => ucfirst("branch"),
 				]);
 			}
 		} else {
@@ -160,7 +169,7 @@ class OrganizationsController extends Controller
 	}
 
 	/**
-	 * Update the specified organization in storage.
+	 * Update the specified branch in storage.
 	 *
 	 * @param  \Illuminate\Http\Request  $request
 	 * @param  int  $id
@@ -168,9 +177,9 @@ class OrganizationsController extends Controller
 	 */
 	public function update(Request $request, $id)
 	{
-		if(Module::hasAccess("Organizations", "edit")) {
+		if(Module::hasAccess("Branches", "edit")) {
 			
-			$rules = Module::validateRules("Organizations", $request, true);
+			$rules = Module::validateRules("Branches", $request, true);
 			
 			$validator = Validator::make($request->all(), $rules);
 			
@@ -178,9 +187,9 @@ class OrganizationsController extends Controller
 				return redirect()->back()->withErrors($validator)->withInput();;
 			}
 			
-			$insert_id = Module::updateRow("Organizations", $request, $id);
+			$insert_id = Module::updateRow("Branches", $request, $id);
 			
-			return redirect()->route(config('laraadmin.adminRoute') . '.organizations.index');
+			return redirect()->route(config('laraadmin.adminRoute') . '.branches.index');
 			
 		} else {
 			return redirect(config('laraadmin.adminRoute')."/");
@@ -188,18 +197,18 @@ class OrganizationsController extends Controller
 	}
 
 	/**
-	 * Remove the specified organization from storage.
+	 * Remove the specified branch from storage.
 	 *
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
 	public function destroy($id)
 	{
-		if(Module::hasAccess("Organizations", "delete")) {
-			Organization::find($id)->delete();
+		if(Module::hasAccess("Branches", "delete")) {
+			Branch::find($id)->delete();
 			
 			// Redirecting to index() method
-			return redirect()->route(config('laraadmin.adminRoute') . '.organizations.index');
+			return redirect()->route(config('laraadmin.adminRoute') . '.branches.index');
 		} else {
 			return redirect(config('laraadmin.adminRoute')."/");
 		}
@@ -212,11 +221,11 @@ class OrganizationsController extends Controller
 	 */
 	public function dtajax()
 	{
-		$values = DB::table('organizations')->select($this->listing_cols)->whereNull('deleted_at');
+		$values = DB::table('branches')->select($this->listing_cols)->whereNull('deleted_at');
 		$out = Datatables::of($values)->make();
 		$data = $out->getData();
 
-		$fields_popup = ModuleFields::getModuleFields('Organizations');
+		$fields_popup = ModuleFields::getModuleFields('Branches');
 		
 		for($i=0; $i < count($data->data); $i++) {
 			for ($j=0; $j < count($this->listing_cols); $j++) { 
@@ -225,7 +234,7 @@ class OrganizationsController extends Controller
 					$data->data[$i][$j] = ModuleFields::getFieldValue($fields_popup[$col], $data->data[$i][$j]);
 				}
 				if($col == $this->view_col) {
-					$data->data[$i][$j] = '<a href="'.url(config('laraadmin.adminRoute') . '/organizations/'.$data->data[$i][0]).'">'.$data->data[$i][$j].'</a>';
+					$data->data[$i][$j] = '<a href="'.url(config('laraadmin.adminRoute') . '/branches/'.$data->data[$i][0]).'">'.$data->data[$i][$j].'</a>';
 				}
 				// else if($col == "author") {
 				//    $data->data[$i][$j];
@@ -234,12 +243,12 @@ class OrganizationsController extends Controller
 			
 			if($this->show_action) {
 				$output = '';
-				if(Module::hasAccess("Organizations", "edit")) {
-					$output .= '<a href="'.url(config('laraadmin.adminRoute') . '/organizations/'.$data->data[$i][0].'/edit').'" class="btn btn-warning btn-xs" style="display:inline;padding:2px 5px 3px 5px;"><i class="fa fa-edit"></i></a>';
+				if(Module::hasAccess("Branches", "edit")) {
+					$output .= '<a href="'.url(config('laraadmin.adminRoute') . '/branches/'.$data->data[$i][0].'/edit').'" class="btn btn-warning btn-xs" style="display:inline;padding:2px 5px 3px 5px;"><i class="fa fa-edit"></i></a>';
 				}
 				
-				if(Module::hasAccess("Organizations", "delete")) {
-					$output .= Form::open(['route' => [config('laraadmin.adminRoute') . '.organizations.destroy', $data->data[$i][0]], 'method' => 'delete', 'style'=>'display:inline']);
+				if(Module::hasAccess("Branches", "delete")) {
+					$output .= Form::open(['route' => [config('laraadmin.adminRoute') . '.branches.destroy', $data->data[$i][0]], 'method' => 'delete', 'style'=>'display:inline']);
 					$output .= ' <button class="btn btn-danger btn-xs" type="submit"><i class="fa fa-times"></i></button>';
 					$output .= Form::close();
 				}

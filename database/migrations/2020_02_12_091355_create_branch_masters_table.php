@@ -7,7 +7,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateOrganizationsTable extends Migration
+class CreateBranchMastersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -19,8 +19,8 @@ class CreateOrganizationsTable extends Migration
         // This Module has been deleted.
         // You can remove this file after migrate:reset
         
-		if (Schema::hasTable('organizations')) {
-            Schema::drop('organizations');
+		if (Schema::hasTable('branch_masters')) {
+            Schema::drop('branch_masters');
         }
     }
 
@@ -31,8 +31,8 @@ class CreateOrganizationsTable extends Migration
      */
     public function down()
     {
-        if (Schema::hasTable('organizations')) {
-            Schema::drop('organizations');
+        if (Schema::hasTable('branch_masters')) {
+            Schema::drop('branch_masters');
         }
     }
 }

@@ -64,7 +64,18 @@ class IndustriesController extends Controller
 	 */
 	public function create()
 	{
-		//
+		if(Module::hasAccess("Industries", "create")) {			
+			$module = Module::get('Industries');
+			
+			$module->row = $industry;
+			
+			return view('la.industries.create', [
+				'module' => $module,
+				'view_col' => $this->view_col,
+			]);
+		} else {
+			return redirect(config('laraadmin.adminRoute')."/");
+		}
 	}
 
 	/**

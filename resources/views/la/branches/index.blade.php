@@ -1,14 +1,14 @@
 @extends("la.layouts.app")
 
-@section("contentheader_title", "States")
-@section("contentheader_description", "States listing")
-@section("section", "States")
+@section("contentheader_title", "Branches")
+@section("contentheader_description", "Branches listing")
+@section("section", "Branches")
 @section("sub_section", "Listing")
-@section("htmlheader_title", "States Listing")
+@section("htmlheader_title", "Branches Listing")
 
 @section("headerElems")
-@la_access("States", "create")
-	<a class="btn btn-success btn-sm pull-right" href="{{ url('admin/states/create') }}" >Add State</a>
+@la_access("Branches", "create")
+	<a class="btn btn-success btn-sm pull-right" href="{{ url('admin/branches/create') }}" >Add Branch</a>
 @endla_access
 @endsection
 
@@ -25,22 +25,21 @@
 @endif
 
 <div class="box box-success">
-	<!--<div class="box-header"></div>-->
 	<div class="box-body">
 		<table id="example1" class="table table-bordered">
-		<thead>
-		<tr class="success">
-			@foreach( $listing_cols as $col )
-			<th>{{ $module->fields[$col]['label'] or ucfirst($col) }}</th>
-			@endforeach
-			@if($show_actions)
-			<th>Actions</th>
-			@endif
-		</tr>
-		</thead>
-		<tbody>
-			
-		</tbody>
+			<thead>
+				<tr class="success">
+					@foreach( $listing_cols as $col )
+					<th>{{ $module->fields[$col]['label'] or ucfirst($col) }}</th>
+					@endforeach
+					@if($show_actions)
+					<th>Actions</th>
+					@endif
+				</tr>
+			</thead>
+			<tbody>
+				
+			</tbody>
 		</table>
 	</div>
 </div>
@@ -57,7 +56,7 @@ $(function () {
 	$("#example1").DataTable({
 		processing: true,
         serverSide: true,
-        ajax: "{{ url(config('laraadmin.adminRoute') . '/state_dt_ajax') }}",
+        ajax: "{{ url(config('laraadmin.adminRoute') . '/branch_dt_ajax') }}",
 		language: {
 			lengthMenu: "_MENU_",
 			search: "_INPUT_",
@@ -67,7 +66,7 @@ $(function () {
 		columnDefs: [ { orderable: false, targets: [-1] }],
 		@endif
 	});
-	$("#state-add-form").validate({
+	$("#branch-add-form").validate({
 		
 	});
 });

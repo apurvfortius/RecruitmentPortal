@@ -8,7 +8,8 @@
 
 @section("headerElems")
 @la_access("Positions", "create")
-	<button class="btn btn-success btn-sm pull-right" data-toggle="modal" data-target="#AddModal">Add Position</button>
+	<a class="btn btn-success btn-sm pull-right" href="{{ url('admin/positions/create') }}" >Add Position</a>
+	{{-- <button class="btn btn-success btn-sm pull-right" data-toggle="modal" data-target="#AddModal">Add Position</button> --}}
 @endla_access
 @endsection
 
@@ -44,59 +45,6 @@
 		</table>
 	</div>
 </div>
-
-@la_access("Positions", "create")
-<div class="modal fade" id="AddModal" role="dialog" aria-labelledby="myModalLabel">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="myModalLabel">Add Position</h4>
-			</div>
-			{!! Form::open(['action' => 'LA\PositionsController@store', 'id' => 'position-add-form']) !!}
-			<div class="modal-body">
-				<div class="box-body">
-                    @la_form($module)
-					
-					{{--
-					@la_input($module, 'position_code')
-					@la_input($module, 'company_id')
-					@la_input($module, 'title')
-					@la_input($module, 'position_level')
-					@la_input($module, 'industry_id')
-					@la_input($module, 'department_id')
-					@la_input($module, 'sub_department_id')
-					@la_input($module, 'report_to')
-					@la_input($module, 'team_size')
-					@la_input($module, 'location')
-					@la_input($module, 'budget_id')
-					@la_input($module, 'qualification_ug')
-					@la_input($module, 'qualification_pg')
-					@la_input($module, 'no_position')
-					@la_input($module, 'req_exp_id')
-					@la_input($module, 'urgency_pos')
-					@la_input($module, 'buy_out')
-					@la_input($module, 'com_turnover')
-					@la_input($module, 'emp_strength')
-					@la_input($module, 'jd_available')
-					@la_input($module, 'website')
-					@la_input($module, 'pos_date')
-					@la_input($module, 'job_description')
-					@la_input($module, 'pos_given_by')
-					@la_input($module, 'pos_assign_to')
-					--}}
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				{!! Form::submit( 'Submit', ['class'=>'btn btn-success']) !!}
-			</div>
-			{!! Form::close() !!}
-		</div>
-	</div>
-</div>
-@endla_access
-
 @endsection
 
 @push('styles')

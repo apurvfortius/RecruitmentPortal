@@ -1,14 +1,14 @@
 @extends("la.layouts.app")
 
-@section("contentheader_title", "States")
-@section("contentheader_description", "States listing")
-@section("section", "States")
+@section("contentheader_title", "Companies")
+@section("contentheader_description", "Companies listing")
+@section("section", "Companies")
 @section("sub_section", "Listing")
-@section("htmlheader_title", "States Listing")
+@section("htmlheader_title", "Companies Listing")
 
 @section("headerElems")
-@la_access("States", "create")
-	<a class="btn btn-success btn-sm pull-right" href="{{ url('admin/states/create') }}" >Add State</a>
+@la_access("Companies", "create")
+	<a class="btn btn-success btn-sm pull-right" href="{{ url('admin/companies/create') }}" >Add Company</a>
 @endla_access
 @endsection
 
@@ -57,7 +57,7 @@ $(function () {
 	$("#example1").DataTable({
 		processing: true,
         serverSide: true,
-        ajax: "{{ url(config('laraadmin.adminRoute') . '/state_dt_ajax') }}",
+        ajax: "{{ url(config('laraadmin.adminRoute') . '/company_dt_ajax') }}",
 		language: {
 			lengthMenu: "_MENU_",
 			search: "_INPUT_",
@@ -67,7 +67,7 @@ $(function () {
 		columnDefs: [ { orderable: false, targets: [-1] }],
 		@endif
 	});
-	$("#state-add-form").validate({
+	$("#company-add-form").validate({
 		
 	});
 });

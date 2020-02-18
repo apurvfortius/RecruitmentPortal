@@ -64,7 +64,18 @@ class BudgetsController extends Controller
 	 */
 	public function create()
 	{
-		//
+		if(Module::hasAccess("Budgets", "create")) {			
+			$module = Module::get('Budgets');
+			
+			$module->row = $budget;
+			
+			return view('la.budgets.create', [
+				'module' => $module,
+				'view_col' => $this->view_col,
+			]);
+		} else {
+			return redirect(config('laraadmin.adminRoute')."/");
+		}
 	}
 
 	/**

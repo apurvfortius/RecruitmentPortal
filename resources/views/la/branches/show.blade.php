@@ -1,7 +1,7 @@
 @extends('la.layouts.app')
 
 @section('htmlheader_title')
-	Organization View
+	Branch View
 @endsection
 
 
@@ -15,7 +15,7 @@
 					<div class="profile-icon text-primary"><i class="fa {{ $module->fa_icon }}"></i></div>
 				</div>
 				<div class="col-md-9">
-					<h4 class="name">{{ $organization->$view_col }}</h4>
+					<h4 class="name">{{ $branch->$view_col }}</h4>
 					<div class="row stats">
 						<div class="col-md-4"><i class="fa fa-facebook"></i> 234</div>
 						<div class="col-md-4"><i class="fa fa-twitter"></i> 12</div>
@@ -81,12 +81,12 @@
 			</div>
 		</div>
 		<div class="col-md-1 actions">
-			@la_access("Organizations", "edit")
-				<a href="{{ url(config('laraadmin.adminRoute') . '/organizations/'.$organization->id.'/edit') }}" class="btn btn-xs btn-edit btn-default"><i class="fa fa-pencil"></i></a><br>
+			@la_access("Branches", "edit")
+				<a href="{{ url(config('laraadmin.adminRoute') . '/branches/'.$branch->id.'/edit') }}" class="btn btn-xs btn-edit btn-default"><i class="fa fa-pencil"></i></a><br>
 			@endla_access
 			
-			@la_access("Organizations", "delete")
-				{{ Form::open(['route' => [config('laraadmin.adminRoute') . '.organizations.destroy', $organization->id], 'method' => 'delete', 'style'=>'display:inline']) }}
+			@la_access("Branches", "delete")
+				{{ Form::open(['route' => [config('laraadmin.adminRoute') . '.branches.destroy', $branch->id], 'method' => 'delete', 'style'=>'display:inline']) }}
 					<button class="btn btn-default btn-delete btn-xs" type="submit"><i class="fa fa-times"></i></button>
 				{{ Form::close() }}
 			@endla_access
@@ -94,7 +94,7 @@
 	</div>
 
 	<ul data-toggle="ajax-tab" class="nav nav-tabs profile" role="tablist">
-		<li class=""><a href="{{ url(config('laraadmin.adminRoute') . '/organizations') }}" data-toggle="tooltip" data-placement="right" title="Back to Organizations"><i class="fa fa-chevron-left"></i></a></li>
+		<li class=""><a href="{{ url(config('laraadmin.adminRoute') . '/branches') }}" data-toggle="tooltip" data-placement="right" title="Back to Branches"><i class="fa fa-chevron-left"></i></a></li>
 		<li class="active"><a role="tab" data-toggle="tab" class="active" href="#tab-general-info" data-target="#tab-info"><i class="fa fa-bars"></i> General Info</a></li>
 		<li class=""><a role="tab" data-toggle="tab" href="#tab-timeline" data-target="#tab-timeline"><i class="fa fa-clock-o"></i> Timeline</a></li>
 	</ul>
@@ -107,19 +107,16 @@
 						<h4>General Info</h4>
 					</div>
 					<div class="panel-body">
-						@la_display($module, 'name')
-						@la_display($module, 'email')
-						@la_display($module, 'phone')
-						@la_display($module, 'website')
-						@la_display($module, 'country')
-						@la_display($module, 'state')
-						@la_display($module, 'city')
+						@la_display($module, 'company_id')
+						@la_display($module, 'type')
+						@la_display($module, 'country_id')
+						@la_display($module, 'state_id')
+						@la_display($module, 'city_id')
 						@la_display($module, 'address')
-						@la_display($module, 'assigned_to')
-						@la_display($module, 'connect_since')
-						@la_display($module, 'description')
-						@la_display($module, 'profile_image')
-						@la_display($module, 'profile')
+						@la_display($module, 'contact_persopn')
+						@la_display($module, 'mobile')
+						@la_display($module, 'telephone')
+						@la_display($module, 'email')
 					</div>
 				</div>
 			</div>

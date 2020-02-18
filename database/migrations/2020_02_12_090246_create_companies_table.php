@@ -8,7 +8,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use Dwij\Laraadmin\Models\Module;
 
-class CreatePositionsTable extends Migration
+class CreateCompaniesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -17,32 +17,11 @@ class CreatePositionsTable extends Migration
      */
     public function up()
     {
-        Module::generate("Positions", 'positions', 'title', 'fa-codepen', [
-            ["position_code", "Position Code", "String", true, "", 1, 255, true],
-            ["company_id", "Company", "Dropdown", false, "", 0, 0, false, "@companies"],
+        Module::generate("Companies", 'companies', 'title', 'fa-bank', [
             ["title", "Title", "String", false, "", 1, 255, true],
-            ["position_level", "Position Level", "Dropdown", false, "", 0, 0, true, "@position_levels"],
-            ["industry_id", "Industry", "Dropdown", false, "", 0, 0, true, "@industries"],
-            ["department_id", "Department", "Dropdown", false, "", 0, 0, true, "@departments"],
-            ["sub_department_id", "Sub Department", "Dropdown", false, "", 0, 0, true, "@sub_departments"],
-            ["report_to", "Report To", "String", false, "", 1, 255, true],
-            ["team_size", "Approx Team Size", "String", false, "", 1, 255, true],
-            ["location", "Location", "String", false, "", 1, 255, true],
-            ["budget_id", "Budget", "Dropdown", false, "", 0, 0, true, "@budgets"],
-            ["qualification_ug", "Qualification (UG)", "Dropdown", false, "", 0, 0, true, "@qualification_ugs"],
-            ["qualification_pg", "Qualification (PG)", "Dropdown", false, "", 0, 0, true, "@qualification_pgs"],
-            ["no_position", "No. of Position", "Integer", false, "1", 0, 11, true],
-            ["req_exp_id", "Require Experience", "Dropdown", false, "", 0, 0, true, "@experiences"],
-            ["urgency_pos", "Position Urgency", "Dropdown", false, "", 0, 0, true, ["Yes","No"]],
-            ["buy_out", "Buy Out", "Radio", false, "No", 0, 0, true, ["Yes","No"]],
-            ["com_turnover", "Company Turnover", "Dropdown", false, "", 0, 0, true, ["100000","200000","300000","500000"]],
-            ["emp_strength", "Employe Strength", "Integer", false, "", 0, 11, true],
-            ["jd_available", "JD Available", "Radio", false, "No", 0, 0, true, ["Yes","No"]],
-            ["website", "Website", "URL", false, "https://", 1, 255, false],
-            ["pos_date", "Position Date", "Date", false, "", 0, 0, true],
-            ["job_description", "Job Description", "Textarea", false, "", 0, 0, false],
-            ["pos_given_by", "Given By", "String", false, "", 1, 255, true],
-            ["pos_assign_to", "Assign To", "Dropdown", false, "", 0, 0, false, "@employees"],
+            ["website", "Website", "URL", false, "", 0, 256, false],
+            ["description", "Description", "Textarea", false, "", 0, 0, false],
+            ["profile_image", "Profile Image", "Image", false, "", 0, 0, false],
         ]);
 		
 		/*
@@ -88,8 +67,8 @@ class CreatePositionsTable extends Migration
      */
     public function down()
     {
-        if (Schema::hasTable('positions')) {
-            Schema::drop('positions');
+        if (Schema::hasTable('companies')) {
+            Schema::drop('companies');
         }
     }
 }

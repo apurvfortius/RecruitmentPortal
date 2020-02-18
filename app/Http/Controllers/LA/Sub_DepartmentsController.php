@@ -64,7 +64,18 @@ class Sub_DepartmentsController extends Controller
 	 */
 	public function create()
 	{
-		//
+		if(Module::hasAccess("Sub_Departments", "create")) {			
+			$module = Module::get('Sub_Departments');
+			
+			$module->row = $sub_department;
+			
+			return view('la.sub_departments.create', [
+				'module' => $module,
+				'view_col' => $this->view_col,
+			]);
+		} else {
+			return redirect(config('laraadmin.adminRoute')."/");
+		}
 	}
 
 	/**

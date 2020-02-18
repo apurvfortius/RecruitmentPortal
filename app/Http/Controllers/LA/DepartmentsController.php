@@ -64,7 +64,18 @@ class DepartmentsController extends Controller
 	 */
 	public function create()
 	{
-		//
+		if(Module::hasAccess("Departments", "create")) {			
+			$module = Module::get('Departments');
+			
+			$module->row = $department;
+			
+			return view('la.departments.create', [
+				'module' => $module,
+				'view_col' => $this->view_col,
+			]);
+		} else {
+			return redirect(config('laraadmin.adminRoute')."/");
+		}
 	}
 
 	/**

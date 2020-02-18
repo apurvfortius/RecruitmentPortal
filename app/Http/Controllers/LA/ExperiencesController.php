@@ -64,7 +64,18 @@ class ExperiencesController extends Controller
 	 */
 	public function create()
 	{
-		//
+		if(Module::hasAccess("Experiences", "create")) {			
+			$module = Module::get('Experiences');
+			
+			$module->row = $experience;
+			
+			return view('la.experiences.create', [
+				'module' => $module,
+				'view_col' => $this->view_col,
+			]);
+		} else {
+			return redirect(config('laraadmin.adminRoute')."/");
+		}
 	}
 
 	/**

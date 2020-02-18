@@ -8,7 +8,7 @@
 
 @section("headerElems")
 @la_access("Experiences", "create")
-	<button class="btn btn-success btn-sm pull-right" data-toggle="modal" data-target="#AddModal">Add Experience</button>
+	<a class="btn btn-success btn-sm pull-right" href="{{ url('admin/experiences/create') }}" >Add Experience</a>
 @endla_access
 @endsection
 
@@ -44,35 +44,6 @@
 		</table>
 	</div>
 </div>
-
-@la_access("Experiences", "create")
-<div class="modal fade" id="AddModal" role="dialog" aria-labelledby="myModalLabel">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="myModalLabel">Add Experience</h4>
-			</div>
-			{!! Form::open(['action' => 'LA\ExperiencesController@store', 'id' => 'experience-add-form']) !!}
-			<div class="modal-body">
-				<div class="box-body">
-                    @la_form($module)
-					
-					{{--
-					@la_input($module, 'title')
-					--}}
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				{!! Form::submit( 'Submit', ['class'=>'btn btn-success']) !!}
-			</div>
-			{!! Form::close() !!}
-		</div>
-	</div>
-</div>
-@endla_access
-
 @endsection
 
 @push('styles')

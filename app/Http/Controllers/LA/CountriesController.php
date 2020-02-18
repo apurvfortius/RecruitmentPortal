@@ -64,7 +64,18 @@ class CountriesController extends Controller
 	 */
 	public function create()
 	{
-		//
+		if(Module::hasAccess("Countries", "create")) {			
+			$module = Module::get('Countries');
+			
+			$module->row = $country;
+			
+			return view('la.countries.create', [
+				'module' => $module,
+				'view_col' => $this->view_col,
+			]);
+		} else {
+			return redirect(config('laraadmin.adminRoute')."/");
+		}
 	}
 
 	/**

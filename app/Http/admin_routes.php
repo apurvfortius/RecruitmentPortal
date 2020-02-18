@@ -67,11 +67,6 @@ Route::group(['as' => $as, 'middleware' => ['auth', '2fa', 'permission:ADMIN_PAN
 	Route::post(config('laraadmin.adminRoute') . '/employees/lock/{id}', 'LA\EmployeesController@lock');
 	Route::post(config('laraadmin.adminRoute') . '/employees/unlock/{id}', 'LA\EmployeesController@unlock');
 	
-	/* ================== Organizations ================== */
-	Route::resource(config('laraadmin.adminRoute') . '/organizations', 'LA\OrganizationsController');
-	Route::get(config('laraadmin.adminRoute') . '/organization_dt_ajax', 'LA\OrganizationsController@dtajax');
-	Route::post(config('laraadmin.adminRoute') . '/getStates', 'LA\OrganizationsController@getState');
-	Route::post(config('laraadmin.adminRoute') . '/getCity', 'LA\OrganizationsController@getCity');
 
 	/* ================== Backups ================== */
 	Route::resource(config('laraadmin.adminRoute') . '/backups', 'LA\BackupsController');
@@ -142,7 +137,22 @@ Route::group(['as' => $as, 'middleware' => ['auth', '2fa', 'permission:ADMIN_PAN
 	Route::resource(config('laraadmin.adminRoute') . '/budgets', 'LA\BudgetsController');
 	Route::get(config('laraadmin.adminRoute') . '/budget_dt_ajax', 'LA\BudgetsController@dtajax');
 
+
+	/* ================== Companies ================== */
+	Route::resource(config('laraadmin.adminRoute') . '/companies', 'LA\CompaniesController');
+	Route::get(config('laraadmin.adminRoute') . '/company_dt_ajax', 'LA\CompaniesController@dtajax');
+
+
+	/* ================== Branches ================== */
+	Route::resource(config('laraadmin.adminRoute') . '/branches', 'LA\BranchesController');
+	Route::get(config('laraadmin.adminRoute') . '/branch_dt_ajax', 'LA\BranchesController@dtajax');
+	Route::post(config('laraadmin.adminRoute') . '/getStates', 'LA\BranchesController@getState');
+	Route::post(config('laraadmin.adminRoute') . '/getCity', 'LA\BranchesController@getCity');
+
 	/* ================== Positions ================== */
 	Route::resource(config('laraadmin.adminRoute') . '/positions', 'LA\PositionsController');
 	Route::get(config('laraadmin.adminRoute') . '/position_dt_ajax', 'LA\PositionsController@dtajax');
+	Route::post(config('laraadmin.adminRoute') . '/getDepartments', 'LA\PositionsController@getDepartments');
+	Route::post(config('laraadmin.adminRoute') . '/getSubDepartments', 'LA\PositionsController@getSubDepartments');
+	Route::post(config('laraadmin.adminRoute') . '/getLocations', 'LA\PositionsController@getLocations');
 });

@@ -23,7 +23,7 @@ class StatesController extends Controller
 {
 	public $show_action = true;
 	public $view_col = 'stateName';
-	public $listing_cols = ['stateID', 'stateName', 'countryID', 'latitude', 'longitude'];
+	public $listing_cols = ['id', 'stateName', 'countryID', 'latitude', 'longitude'];
 	
 	public function __construct() {
 		// Field Access of Listing Columns
@@ -64,7 +64,18 @@ class StatesController extends Controller
 	 */
 	public function create()
 	{
-		//
+		if(Module::hasAccess("States", "create")) {			
+			$module = Module::get('States');
+			
+			$module->row = $state;
+			
+			return view('la.states.create', [
+				'module' => $module,
+				'view_col' => $this->view_col,
+			]);
+		} else {
+			return redirect(config('laraadmin.adminRoute')."/");
+		}
 	}
 
 	/**

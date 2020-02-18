@@ -64,7 +64,18 @@ class Position_LevelsController extends Controller
 	 */
 	public function create()
 	{
-		//
+		if(Module::hasAccess("Position_Levels", "create")) {			
+			$module = Module::get('Position_Levels');
+			
+			$module->row = $position_level;
+			
+			return view('la.position_levels.create', [
+				'module' => $module,
+				'view_col' => $this->view_col,
+			]);
+		} else {
+			return redirect(config('laraadmin.adminRoute')."/");
+		}
 	}
 
 	/**

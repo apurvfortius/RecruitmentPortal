@@ -64,7 +64,18 @@ class Qualification_UGsController extends Controller
 	 */
 	public function create()
 	{
-		//
+		if(Module::hasAccess("Qualification_UGs", "create")) {			
+			$module = Module::get('Qualification_UGs');
+			
+			$module->row = $qualification_ug;
+			
+			return view('la.qualification_ugs.create', [
+				'module' => $module,
+				'view_col' => $this->view_col,
+			]);
+		} else {
+			return redirect(config('laraadmin.adminRoute')."/");
+		}
 	}
 
 	/**

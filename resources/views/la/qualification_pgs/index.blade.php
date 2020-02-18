@@ -8,7 +8,7 @@
 
 @section("headerElems")
 @la_access("Qualification_PGs", "create")
-	<button class="btn btn-success btn-sm pull-right" data-toggle="modal" data-target="#AddModal">Add Qualification PG</button>
+	<a class="btn btn-success btn-sm pull-right" href="{{ url('admin/qualification_pgs/create') }}" >Add Qualification PG</a>
 @endla_access
 @endsection
 
@@ -44,35 +44,6 @@
 		</table>
 	</div>
 </div>
-
-@la_access("Qualification_PGs", "create")
-<div class="modal fade" id="AddModal" role="dialog" aria-labelledby="myModalLabel">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="myModalLabel">Add Qualification PG</h4>
-			</div>
-			{!! Form::open(['action' => 'LA\Qualification_PGsController@store', 'id' => 'qualification_pg-add-form']) !!}
-			<div class="modal-body">
-				<div class="box-body">
-                    @la_form($module)
-					
-					{{--
-					@la_input($module, 'title')
-					--}}
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				{!! Form::submit( 'Submit', ['class'=>'btn btn-success']) !!}
-			</div>
-			{!! Form::close() !!}
-		</div>
-	</div>
-</div>
-@endla_access
-
 @endsection
 
 @push('styles')
