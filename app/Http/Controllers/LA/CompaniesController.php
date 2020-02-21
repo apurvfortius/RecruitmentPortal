@@ -18,22 +18,31 @@ use Dwij\Laraadmin\Models\Module;
 use Dwij\Laraadmin\Models\ModuleFields;
 
 use App\Models\Company;
+use App\Models\Branch;
+use App\Models\Country;
+use App\Models\State;
+use App\Models\City;
 
 class CompaniesController extends Controller
 {
 	public $show_action = true;
 	public $view_col = 'title';
 	public $listing_cols = ['id', 'title', 'website', 'description', 'profile_image'];
+
+	//for display branches 
+	public $listing_cols2 = ['id', 'company_id', 'type', 'country_id', 'state_id', 'city_id', 'address', 'contact_persopn', 'mobile', 'telephone', 'email'];
 	
 	public function __construct() {
 		// Field Access of Listing Columns
 		if(\Dwij\Laraadmin\Helpers\LAHelper::laravel_ver() == 5.3) {
 			$this->middleware(function ($request, $next) {
 				$this->listing_cols = ModuleFields::listingColumnAccessScan('Companies', $this->listing_cols);
+				$this->listing_cols2 = ModuleFields::listingColumnAccessScan('Branches', $this->listing_cols2);
 				return $next($request);
 			});
 		} else {
 			$this->listing_cols = ModuleFields::listingColumnAccessScan('Companies', $this->listing_cols);
+			$this->listing_cols2 = ModuleFields::listingColumnAccessScan('Branches', $this->listing_cols2);
 		}
 	}
 	
@@ -119,13 +128,19 @@ class CompaniesController extends Controller
 			if(isset($company->id)) {
 				$module = Module::get('Companies');
 				$module->row = $company;
+
+				$moduleBranch = Module::get('Branches');
 				
+				$branch = Branch::where('company_id', $id)->get();
 				return view('la.companies.show', [
 					'module' => $module,
 					'view_col' => $this->view_col,
 					'no_header' => true,
-					'no_padding' => "no-padding"
-				])->with('company', $company);
+					'no_padding' => "no-padding",
+					'listing_cols2' => $this->listing_cols2,
+					'moduleBranch' => $moduleBranch,
+					'show_actions' => $this->show_action,
+				])->with(['company' => $company, 'id' => $id]);
 			} else {
 				return view('errors.404', [
 					'record_id' => $id,
@@ -242,8 +257,11 @@ class CompaniesController extends Controller
 			
 			if($this->show_action) {
 				$output = '';
+				
+				$output .= '<a href="'.url(config('laraadmin.adminRoute') . '/companies/branch/'.$data->data[$i][0]).'" class="btn btn-info btn-xs action_btn_table" style="display:inline;padding:2px 5px 3px 5px;" title="Add Branch"><i class="fa fa-plus"></i></a>';
+
 				if(Module::hasAccess("Companies", "edit")) {
-					$output .= '<a href="'.url(config('laraadmin.adminRoute') . '/companies/'.$data->data[$i][0].'/edit').'" class="btn btn-warning btn-xs" style="display:inline;padding:2px 5px 3px 5px;"><i class="fa fa-edit"></i></a>';
+					$output .= '<a href="'.url(config('laraadmin.adminRoute') . '/companies/'.$data->data[$i][0].'/edit').'" class="btn btn-warning btn-xs action_btn_table" style="display:inline;padding:2px 5px 3px 5px;"><i class="fa fa-edit"></i></a>';
 				}
 				
 				if(Module::hasAccess("Companies", "delete")) {

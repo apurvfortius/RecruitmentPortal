@@ -132,6 +132,8 @@
 						@la_display($module, 'job_description')
 						@la_display($module, 'pos_given_by')
 						@la_display($module, 'pos_assign_to')
+						@la_display($module, 'created_by')
+						@la_display($module, 'last_edited_by')
 					</div>
 				</div>
 			</div>

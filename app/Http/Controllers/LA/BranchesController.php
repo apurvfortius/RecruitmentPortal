@@ -17,6 +17,7 @@ use Collective\Html\FormFacade as Form;
 use Dwij\Laraadmin\Models\Module;
 use Dwij\Laraadmin\Models\ModuleFields;
 
+use App\Models\Company;
 use App\Models\Branch;
 use App\Models\Country;
 use App\Models\State;
@@ -45,35 +46,36 @@ class BranchesController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function index()
-	{
-		$module = Module::get('Branches');
+	// public function index()
+	// {
+	// 	$module = Module::get('Branches');
 		
-		if(Module::hasAccess($module->id)) {
-			return View('la.branches.index', [
-				'show_actions' => $this->show_action,
-				'listing_cols' => $this->listing_cols,
-				'module' => $module
-			]);
-		} else {
-            return redirect(config('laraadmin.adminRoute')."/");
-        }
-	}
+	// 	if(Module::hasAccess($module->id)) {
+	// 		return View('la.branches.index', [
+	// 			'show_actions' => $this->show_action,
+	// 			'listing_cols' => $this->listing_cols,
+	// 			'module' => $module
+	// 		]);
+	// 	} else {
+    //         return redirect(config('laraadmin.adminRoute')."/");
+    //     }
+	// }
 
 	/**
 	 * Show the form for creating a new branch.
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function create()
+	public function create($id)
 	{
-		if(Module::hasAccess("Branches", "edit")) {			
+		if(Module::hasAccess("Branches", "create")) {			
 			$module = Module::get('Branches');
 			
+			$company = Company::find($id);
 			return view('la.branches.create', [
 				'module' => $module,
 				'view_col' => $this->view_col,
-			]);
+			])->with(['id' => $id, 'company' => $company]);
 		} else {
 			return redirect(config('laraadmin.adminRoute')."/");
 		}
@@ -99,7 +101,7 @@ class BranchesController extends Controller
 			
 			$insert_id = Module::insert("Branches", $request);
 			
-			return redirect()->route(config('laraadmin.adminRoute') . '.branches.index');
+			return redirect()->route(config('laraadmin.adminRoute') . '.companies.index');
 			
 		} else {
 			return redirect(config('laraadmin.adminRoute')."/");
@@ -112,31 +114,31 @@ class BranchesController extends Controller
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function show($id)
-	{
-		if(Module::hasAccess("Branches", "view")) {
+	// public function show($id)
+	// {
+	// 	if(Module::hasAccess("Branches", "view")) {
 			
-			$branch = Branch::find($id);
-			if(isset($branch->id)) {
-				$module = Module::get('Branches');
-				$module->row = $branch;
+	// 		$branch = Branch::find($id);
+	// 		if(isset($branch->id)) {
+	// 			$module = Module::get('Branches');
+	// 			$module->row = $branch;
 				
-				return view('la.branches.show', [
-					'module' => $module,
-					'view_col' => $this->view_col,
-					'no_header' => true,
-					'no_padding' => "no-padding"
-				])->with('branch', $branch);
-			} else {
-				return view('errors.404', [
-					'record_id' => $id,
-					'record_name' => ucfirst("branch"),
-				]);
-			}
-		} else {
-			return redirect(config('laraadmin.adminRoute')."/");
-		}
-	}
+	// 			return view('la.branches.show', [
+	// 				'module' => $module,
+	// 				'view_col' => $this->view_col,
+	// 				'no_header' => true,
+	// 				'no_padding' => "no-padding"
+	// 			])->with('branch', $branch);
+	// 		} else {
+	// 			return view('errors.404', [
+	// 				'record_id' => $id,
+	// 				'record_name' => ucfirst("branch"),
+	// 			]);
+	// 		}
+	// 	} else {
+	// 		return redirect(config('laraadmin.adminRoute')."/");
+	// 	}
+	// }
 
 	/**
 	 * Show the form for editing the specified branch.
@@ -189,7 +191,7 @@ class BranchesController extends Controller
 			
 			$insert_id = Module::updateRow("Branches", $request, $id);
 			
-			return redirect()->route(config('laraadmin.adminRoute') . '.branches.index');
+			return redirect()->route(config('laraadmin.adminRoute') . '.companies.index');
 			
 		} else {
 			return redirect(config('laraadmin.adminRoute')."/");
@@ -208,7 +210,7 @@ class BranchesController extends Controller
 			Branch::find($id)->delete();
 			
 			// Redirecting to index() method
-			return redirect()->route(config('laraadmin.adminRoute') . '.branches.index');
+			return redirect()->route(config('laraadmin.adminRoute') . '.companies.index');
 		} else {
 			return redirect(config('laraadmin.adminRoute')."/");
 		}
@@ -219,9 +221,10 @@ class BranchesController extends Controller
 	 *
 	 * @return
 	 */
-	public function dtajax()
+	public function dtajax(Request $request)
 	{
-		$values = DB::table('branches')->select($this->listing_cols)->whereNull('deleted_at');
+		$com_id = $request->company_id;
+		$values = DB::table('branches')->select($this->listing_cols)->whereNull('deleted_at')->where('company_id', $com_id);
 		$out = Datatables::of($values)->make();
 		$data = $out->getData();
 
@@ -236,15 +239,12 @@ class BranchesController extends Controller
 				if($col == $this->view_col) {
 					$data->data[$i][$j] = '<a href="'.url(config('laraadmin.adminRoute') . '/branches/'.$data->data[$i][0]).'">'.$data->data[$i][$j].'</a>';
 				}
-				// else if($col == "author") {
-				//    $data->data[$i][$j];
-				// }
 			}
 			
 			if($this->show_action) {
 				$output = '';
 				if(Module::hasAccess("Branches", "edit")) {
-					$output .= '<a href="'.url(config('laraadmin.adminRoute') . '/branches/'.$data->data[$i][0].'/edit').'" class="btn btn-warning btn-xs" style="display:inline;padding:2px 5px 3px 5px;"><i class="fa fa-edit"></i></a>';
+					$output .= '<a href="'.url(config('laraadmin.adminRoute') . '/branches/'.$data->data[$i][0].'/edit').'" class="btn btn-warning btn-xs action_btn_table" style="display:inline;padding:2px 5px 3px 5px;"><i class="fa fa-edit"></i></a>';
 				}
 				
 				if(Module::hasAccess("Branches", "delete")) {
@@ -257,30 +257,5 @@ class BranchesController extends Controller
 		}
 		$out->setData($data);
 		return $out;
-	}
-
-	public function getState(Request $request)
-	{
-		$id = Country::find($request->id);
-		$result = State::where('countryID', $id->countryID)->get();
-
-		$out = '';
-		foreach($result as $item){
-			$out .= "<option value=".$item->id.">".$item->stateName."</option>";
-		}
-		return $out;
-		//return $out = Form::select('state', $result, $default_val, $params);
-	}
-
-	public function getCity(Request $request)
-	{
-		$result = City::where('stateID', $request->id)->get();
-
-		$out = '';
-		foreach($result as $item){
-			$out .= "<option value=".$item->id.">".$item->cityName."</option>";
-		}
-		return $out;
-		//return $out = Form::select('state', $result, $default_val, $params);
 	}
 }

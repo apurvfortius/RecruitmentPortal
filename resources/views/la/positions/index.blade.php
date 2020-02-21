@@ -8,8 +8,7 @@
 
 @section("headerElems")
 @la_access("Positions", "create")
-	<a class="btn btn-success btn-sm pull-right" href="{{ url('admin/positions/create') }}" >Add Position</a>
-	{{-- <button class="btn btn-success btn-sm pull-right" data-toggle="modal" data-target="#AddModal">Add Position</button> --}}
+	<a class="btn btn-success btn-sm pull-right" href="{{ url('admin/positions/create') }}" >Add Position Level</a>
 @endla_access
 @endsection
 

@@ -31,7 +31,10 @@
 			<div class="col-md-8 col-md-offset-2">
 				{!! Form::open(['action' => 'LA\PositionsController@store', 'id' => 'position-add-form']) !!}
 					{{-- @la_form($module) --}}
-					@la_input($module, 'position_code')
+					
+					{{-- Position Code will be created while inserting --}}
+					{{-- @la_input($module, 'position_code') --}}
+					
 					@la_input($module, 'company_id')
 					@la_input($module, 'title')
 					@la_input($module, 'position_level')
@@ -76,7 +79,9 @@
 					@la_input($module, 'job_description')
 					@la_input($module, 'pos_given_by')
 					@la_input($module, 'pos_assign_to')
-					
+					{{-- @la_input($module, 'created_by')
+					@la_input($module, 'last_edited_by') --}}
+					<input type="hidden" name="created_by" value="{{ auth()->user()->id}}">
                     <br>
 					<div class="form-group">
 						{!! Form::submit( 'Submit', ['class'=>'btn btn-success']) !!}

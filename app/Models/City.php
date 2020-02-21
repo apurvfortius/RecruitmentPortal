@@ -19,7 +19,7 @@ class City extends Model
         
 	];
 	
-	protected $primaryKey = 'cityID';
+	protected $primaryKey = 'id';
 
 
 	protected $guarded = [];

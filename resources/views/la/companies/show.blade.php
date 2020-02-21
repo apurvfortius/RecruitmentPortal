@@ -97,6 +97,7 @@
 		<li class=""><a href="{{ url(config('laraadmin.adminRoute') . '/companies') }}" data-toggle="tooltip" data-placement="right" title="Back to Companies"><i class="fa fa-chevron-left"></i></a></li>
 		<li class="active"><a role="tab" data-toggle="tab" class="active" href="#tab-general-info" data-target="#tab-info"><i class="fa fa-bars"></i> General Info</a></li>
 		<li class=""><a role="tab" data-toggle="tab" href="#tab-timeline" data-target="#tab-timeline"><i class="fa fa-clock-o"></i> Timeline</a></li>
+		<li class=""><a role="tab" data-toggle="tab" href="#tab-branch" data-target="#tab-branch"><i class="fa fa-clock-o"></i> Branch</a></li>
 	</ul>
 
 	<div class="tab-content">
@@ -115,6 +116,35 @@
 				</div>
 			</div>
 		</div>
+
+		<div role="tabpanel" class="tab-pane fade in" id="tab-branch">
+			<div class="tab-content">
+				<div class="panel">
+					<div class="panel-default panel-heading">
+						<h4>Branch</h4>
+					</div>
+					<div class="panel-body">
+						<table id="example1" class="table table-bordered">
+							<thead>
+							<tr class="success">
+								@foreach( $listing_cols2 as $col )
+								<th>{{ $moduleBranch->fields[$col]['label'] or ucfirst($col) }}</th>
+								@endforeach
+								@if($show_actions)
+								<th>Actions</th>
+								@endif
+							</tr>
+							</thead>
+							<tbody>
+								
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
 		<div role="tabpanel" class="tab-pane fade in p20 bg-white" id="tab-timeline">
 			<ul class="timeline timeline-inverse">
 				<!-- timeline time label -->
@@ -215,3 +245,33 @@
 	</div>
 </div>
 @endsection
+
+@push('styles')
+<link rel="stylesheet" type="text/css" href="{{ asset('la-assets/plugins/datatables/datatables.min.css') }}"/>
+@endpush
+
+@push('scripts')
+<script src="{{ asset('la-assets/plugins/datatables/datatables.min.js') }}"></script>
+<script>
+$(function () {
+	$("#example1").DataTable({
+		processing: true,
+        serverSide: true,
+        ajax: {
+			url: "{{ url(config('laraadmin.adminRoute') . '/branch_dt_ajax') }}",
+			data: {
+				"company_id": "{{ $id }}",
+			}
+		},
+		language: {
+			lengthMenu: "_MENU_",
+			search: "_INPUT_",
+			searchPlaceholder: "Search"
+		},
+		@if($show_actions)
+		columnDefs: [ { orderable: false, targets: [-1] }],
+		@endif
+	});
+});
+</script>
+@endpush

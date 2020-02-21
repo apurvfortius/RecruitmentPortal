@@ -29,7 +29,7 @@
 	<div class="box-body">
 		<div class="row">
 			<div class="col-md-8 col-md-offset-2">
-				{!! Form::model($sub_department, ['route' => [config('laraadmin.adminRoute') . '.sub_departments.update', $sub_department->id ], 'method'=>'PUT', 'id' => 'sub_department-edit-form']) !!}
+				{!! Form::open(['action' => 'LA\Sub_DepartmentsController@store', 'id' => 'sub_department-add-form']) !!}
 					@la_form($module)
 					
 					{{--
@@ -38,7 +38,7 @@
 					--}}
                     <br>
 					<div class="form-group">
-						{!! Form::submit( 'Update', ['class'=>'btn btn-success']) !!} <button class="btn btn-default pull-right"><a href="{{ url(config('laraadmin.adminRoute') . '/sub_departments') }}">Cancel</a></button>
+						{!! Form::submit( 'Submit', ['class'=>'btn btn-success']) !!} <button class="btn btn-default pull-right"><a href="{{ url(config('laraadmin.adminRoute') . '/sub_departments') }}">Cancel</a></button>
 					</div>
 				{!! Form::close() !!}
 			</div>

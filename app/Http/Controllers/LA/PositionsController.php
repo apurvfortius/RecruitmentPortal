@@ -18,16 +18,12 @@ use Dwij\Laraadmin\Models\Module;
 use Dwij\Laraadmin\Models\ModuleFields;
 
 use App\Models\Position;
-use App\Models\Department;
-use App\Models\Sub_Department;
-use App\Models\Branch;
-use App\Models\City;
 
 class PositionsController extends Controller
 {
 	public $show_action = true;
 	public $view_col = 'title';
-	public $listing_cols = ['id', 'position_code', 'company_id', 'title', 'position_level', 'industry_id', 'department_id', 'sub_department_id', 'report_to', 'team_size', 'location', 'budget_id', 'qualification_ug', 'qualification_pg', 'no_position', 'req_exp_id', 'urgency_pos', 'buy_out', 'com_turnover', 'emp_strength', 'jd_available', 'website', 'pos_date', 'job_description', 'pos_given_by', 'pos_assign_to'];
+	public $listing_cols = ['id', 'position_code', 'company_id', 'title', 'position_level', 'industry_id', 'department_id', 'sub_department_id', 'report_to', 'team_size', 'location', 'budget_id', 'qualification_ug', 'qualification_pg', 'no_position', 'req_exp_id', 'urgency_pos', 'buy_out', 'com_turnover', 'emp_strength', 'jd_available', 'website', 'pos_date', 'job_description', 'pos_given_by', 'pos_assign_to', 'created_by', 'last_edited_by'];
 	
 	public function __construct() {
 		// Field Access of Listing Columns
@@ -68,7 +64,7 @@ class PositionsController extends Controller
 	 */
 	public function create()
 	{
-		if(Module::hasAccess("Positions", "edit")) {			
+		if(Module::hasAccess("Positions", "create")) {			
 			$module = Module::get('Positions');
 			
 			$module->row = $position;
@@ -91,7 +87,16 @@ class PositionsController extends Controller
 	public function store(Request $request)
 	{
 		if(Module::hasAccess("Positions", "create")) {
-		
+			$last_id = Position::orderBy('id', 'desc')->first();			
+			if($last_id){
+				$number = sprintf("%06s", $last_id);
+			}
+			else{
+				$number = sprintf("%06s", 1);
+			}
+			$request->request->add(['position_code' => "NCS_".date('Y')."_".$number]);
+			//$request->position_code = "NCS_".date('Y')."_".$number;
+			
 			$rules = Module::validateRules("Positions", $request);
 			
 			$validator = Validator::make($request->all(), $rules);
@@ -259,43 +264,6 @@ class PositionsController extends Controller
 			}
 		}
 		$out->setData($data);
-		return $out;
-	}
-
-	public function getDepartments(Request $request)
-	{
-		$result = Department::where('industry_id', $request->id)->get();
-
-		$out = '';
-		foreach($result as $item){
-			$out .= "<option value=".$item->id.">".$item->title."</option>";
-		}
-		return $out;
-	}
-
-	public function getSubDepartments(Request $request)
-	{
-		$result = Sub_Department::where('department_id', $request->id)->get();
-
-		$out = '';
-		foreach($result as $item){
-			$out .= "<option value=".$item->id.">".$item->title."</option>";
-		}
-		return $out;
-	}
-
-	public function getLocations(Request $request)
-	{
-		$result = Branch::select('cities.id', 'cities.cityName')
-						->join('cities', 'cities.id', '=','branches.city_id')
-						->where('branches.company_id', $request->id)
-						->get();
-
-		//$result = City::where('id', $city_id[0]->city_id)->get();
-		$out = '';
-		foreach($result as $item){
-			$out .= "<option value=".$item->id.">".$item->cityName."</option>";
-		}
 		return $out;
 	}
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * Controller genrated using LaraAdmin
- * Help: http://laraadmin.com
+ * Help: Contact Sagar Upadhyay (usagar80@gmail.com)
  */
 
 namespace App\Http\Controllers\LA;
@@ -28,26 +28,21 @@ use Mail;
 use Log;
 
 class EmployeesController extends Controller
-{	
+{
 	public $show_action = true;
-	public $module = 'Employee';
 	public $view_col = 'name';
-	public $listing_cols = ['id', 'employee_code', 'name', 'gender', 'mobile', 'email', 'present_address', 'permanent_address'];
-	public $selectcols_cols = ['id', 'employee_code', 'name', 'gender', 'mobile', 'email', 'present_address', 'permanent_address'];
-
-	public function __construct() {		
+	public $listing_cols = ['id', 'employee_code', 'name', 'mobile', 'email', 'country_id', 'state_id', 'city', 'crnt_address'];
+	
+	public function __construct() {
 		// Field Access of Listing Columns
 		if(\Dwij\Laraadmin\Helpers\LAHelper::laravel_ver() == 5.3) {
 			$this->middleware(function ($request, $next) {
 				$this->listing_cols = ModuleFields::listingColumnAccessScan('Employees', $this->listing_cols);
-				$this->selectcols_cols = ModuleFields::listingColumnAccessScan('Employees', $this->selectcols_cols);
 				return $next($request);
 			});
 		} else {
 			$this->listing_cols = ModuleFields::listingColumnAccessScan('Employees', $this->listing_cols);
-			$this->selectcols_cols = ModuleFields::listingColumnAccessScan('Employees', $this->selectcols_cols);
 		}
-		array_push($this->selectcols_cols, 'status');
 	}
 	
 	/**
@@ -58,6 +53,9 @@ class EmployeesController extends Controller
 	public function index()
 	{
 		$module = Module::get('Employees');
+		
+		// // Get User Table Information
+		// $user = User::where('context_id', '=', $id)->firstOrFail();
 		
 		if(Module::hasAccess($module->id)) {
 			return View('la.employees.index', [
@@ -77,7 +75,20 @@ class EmployeesController extends Controller
 	 */
 	public function create()
 	{
-		//
+		if(Module::hasAccess("Employees", "create")) {
+			$module = Module::get('Employees');
+			
+			// Get User Table Information
+			//$user = User::where('context_id', '=', $id)->firstOrFail();
+			
+			return view('la.employees.create', [
+				'module' => $module,
+				'view_col' => $this->view_col,
+				//'user' => $user,
+			]);
+		} else {
+			return redirect(config('laraadmin.adminRoute')."/");
+		}
 	}
 
 	/**
@@ -89,7 +100,14 @@ class EmployeesController extends Controller
 	public function store(Request $request)
 	{
 		if(Module::hasAccess("Employees", "create")) {
-		
+			$last_id = Employee::orderBy('id', 'desc')->first();			
+			if($last_id){
+				$number = sprintf("%04s", $last_id->id + 1);
+			}
+			else{
+				$number = sprintf("%04s", 1);
+			}
+			$request->request->add(['employee_code' => "NCS_".$number]);
 			$rules = Module::validateRules("Employees", $request);
 			
 			$validator = Validator::make($request->all(), $rules);
@@ -123,13 +141,12 @@ class EmployeesController extends Controller
 			if(parent::CanEmailSend()) {
 				// Send mail to User his Password
 				Mail::send('emails.send_login_cred', ['user' => $user], function ($m) use ($user) {
-					//$m->from('hello@laraadmin.com', 'LaraAdmin');
+					$m->from(env('MAIL_FROM'), 'LaraAdmin');
 					$m->to($user->email, $user->name)->subject(Setting::getByKey('NewUserMessage'));
 				});
 			}
 
 			Log::info("User created: username: ".$user->email);
-			
 			return redirect()->route(config('laraadmin.adminRoute') . '.employees.index');
 			
 		} else {
@@ -284,17 +301,18 @@ class EmployeesController extends Controller
 	 */
 	public function dtajax()
 	{
-		$values = DB::table('employeeuser')->select($this->selectcols_cols)->whereNull('deleted_at');
+		$values = DB::table('employees')->select($this->listing_cols)->whereNull('deleted_at');
 		$out = Datatables::of($values)->make();
 		$data = $out->getData();
 
 		$fields_popup = ModuleFields::getModuleFields('Employees');
+		
 		for($i=0; $i < count($data->data); $i++) {
 			for ($j=0; $j < count($this->listing_cols); $j++) { 
 				$col = $this->listing_cols[$j];
-				// if($fields_popup[$col] != null && starts_with($fields_popup[$col]->popup_vals, "@")) {
-				// 	$data->data[$i][$j] = ModuleFields::getFieldValue($fields_popup[$col], $data->data[$i][$j]);
-				// }
+				if($fields_popup[$col] != null && starts_with($fields_popup[$col]->popup_vals, "@")) {
+					$data->data[$i][$j] = ModuleFields::getFieldValue($fields_popup[$col], $data->data[$i][$j]);
+				}
 				if($col == $this->view_col) {
 					$data->data[$i][$j] = '<a href="'.url(config('laraadmin.adminRoute') . '/employees/'.$data->data[$i][0]).'">'.$data->data[$i][$j].'</a>';
 				}
@@ -328,12 +346,10 @@ class EmployeesController extends Controller
 				
 				if(Module::hasAccess("Employees", "delete")) {
 					$output .= Form::open(['route' => [config('laraadmin.adminRoute') . '.employees.destroy', $data->data[$i][0]], 'method' => 'delete', 'style'=>'display:inline']);
-					$output .= ' <button class="btn btn-danger btn-xs" onclick="return confirm(\''.Message::getBykey($this->module, 'ConfirmDelete').'\')" type="submit"><i class="fa fa-times"></i></button>';
+					$output .= ' <button class="btn btn-danger btn-xs" type="submit"><i class="fa fa-times"></i></button>';
 					$output .= Form::close();
 				}
-
-				// Assign Output to $j column which is technically last column which will override status values.
-				$data->data[$i][$j] = (string)$output;
+				$data->data[$i][] = (string)$output;
 			}
 		}
 		$out->setData($data);

@@ -3,7 +3,7 @@
 @section("contentheader_title")
 	<a href="{{ url(config('laraadmin.adminRoute') . '/branches') }}">Branch</a> :
 @endsection
-@section("contentheader_description", "Create New")
+@section("contentheader_description", $company->title)
 @section("section", "Branches")
 @section("section_url", url(config('laraadmin.adminRoute') . '/branches'))
 @section("sub_section", "Create")
@@ -29,11 +29,11 @@
 	<div class="box-body">
 		<div class="row">
 			<div class="col-md-8 col-md-offset-2">
-				{!! Form::open(['action' => 'LA\BranchesController@store', 'id' => 'branch-add-form']) !!}
+				{!! Form::open(['method'=>'POST', 'action' => 'LA\BranchesController@store', 'id' => 'branch-add-form']) !!}
 					{{-- @la_form($module) --}}
+					<input type="hidden" value="{{ $id }}" name="company_id">
 					
-					
-					@la_input($module, 'company_id')
+					{{-- @la_input($module, 'company_id') --}}
 					@la_input($module, 'type')
                     @la_input($module, 'country_id')
                     

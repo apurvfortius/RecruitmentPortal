@@ -58,6 +58,8 @@
 					@la_input($module, 'job_description')
 					@la_input($module, 'pos_given_by')
 					@la_input($module, 'pos_assign_to')
+					@la_input($module, 'created_by')
+					@la_input($module, 'last_edited_by')
 					--}}
                     <br>
 					<div class="form-group">

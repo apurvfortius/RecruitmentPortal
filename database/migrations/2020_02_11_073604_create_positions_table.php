@@ -33,9 +33,9 @@ class CreatePositionsTable extends Migration
             ["qualification_pg", "Qualification (PG)", "Dropdown", false, "", 0, 0, true, "@qualification_pgs"],
             ["no_position", "No. of Position", "Integer", false, "1", 0, 11, true],
             ["req_exp_id", "Require Experience", "Dropdown", false, "", 0, 0, true, "@experiences"],
-            ["urgency_pos", "Position Urgency", "Dropdown", false, "", 0, 0, true, ["Yes","No"]],
-            ["buy_out", "Buy Out", "Radio", false, "No", 0, 0, true, ["Yes","No"]],
-            ["com_turnover", "Company Turnover", "Dropdown", false, "", 0, 0, true, ["100000","200000","300000","500000"]],
+            ["urgency_pos", "Position Urgency", "Dropdown", false, "", 0, 0, true, ["Most Urgent","Urgent","Moderate","Less Urgent"]],
+            ["buy_out", "Buy Out", "Radio", false, "No", 0, 0, true, ["Yes","No","Not Sure"]],
+            ["com_turnover", "Company Turnover", "Currency", false, "", 1, 4294967295, true],
             ["emp_strength", "Employe Strength", "Integer", false, "", 0, 11, true],
             ["jd_available", "JD Available", "Radio", false, "No", 0, 0, true, ["Yes","No"]],
             ["website", "Website", "URL", false, "https://", 1, 255, false],
@@ -43,6 +43,8 @@ class CreatePositionsTable extends Migration
             ["job_description", "Job Description", "Textarea", false, "", 0, 0, false],
             ["pos_given_by", "Given By", "String", false, "", 1, 255, true],
             ["pos_assign_to", "Assign To", "Dropdown", false, "", 0, 0, false, "@employees"],
+            ["created_by", "Created By", "Dropdown", false, "", 0, 0, false, "@users"],
+            ["last_edited_by", "Last Edited By", "Dropdown", false, "", 0, 0, true, "@users"],
         ]);
 		
 		/*
