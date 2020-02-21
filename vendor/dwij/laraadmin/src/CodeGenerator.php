@@ -65,26 +65,70 @@ class CodeGenerator
         // Create Folder
         @mkdir(base_path("resources/views/la/".$config->dbTableName), 0777, true);
 
-        // ============================ Listing / Index ============================
-        $md = file_get_contents($templateDirectory."/views/index.blade.stub");
+        //below if condtion added beacause we use pop and new page consept
+        if($config->insert_type == 'NEWPAGE'){
+            // ============================ Listing / Index ============================
+            $md = file_get_contents($templateDirectory."/views/index2.blade.stub");
 
-        $md = str_replace("__module_name__", $config->moduleName, $md);
-        $md = str_replace("__db_table_name__", $config->dbTableName, $md);
-        $md = str_replace("__controller_class_name__", $config->controllerName, $md);
-        $md = str_replace("__singular_var__", $config->singularVar, $md);
-		$md = str_replace("__singular_cap_var__", $config->singularCapitalVar, $md);
-        $md = str_replace("__module_name_2__", $config->moduleName2, $md);
+            $md = str_replace("__module_name__", $config->moduleName, $md);
+            $md = str_replace("__db_table_name__", $config->dbTableName, $md);
+            $md = str_replace("__controller_class_name__", $config->controllerName, $md);
+            $md = str_replace("__singular_var__", $config->singularVar, $md);
+            $md = str_replace("__singular_cap_var__", $config->singularCapitalVar, $md);
+            $md = str_replace("__module_name_2__", $config->moduleName2, $md);
+            $md = str_replace("__module_add_route__", $config->routes, $md);
 
-        // Listing columns
-        $inputFields = "";
-        foreach ($config->module->fields as $field) {
-            $inputFields .= "\t\t\t\t\t@la_input($"."module, '".$field['colname']."')\n";
+            // Listing columns
+            $inputFields = "";
+            foreach ($config->module->fields as $field) {
+                $inputFields .= "\t\t\t\t\t@la_input($"."module, '".$field['colname']."')\n";
+            }
+            $inputFields = trim($inputFields);
+            $md = str_replace("__input_fields__", $inputFields, $md);
+
+            file_put_contents(base_path('resources/views/la/'.$config->dbTableName.'/index.blade.php'), $md);
+        
+            // ============================ Create ============================
+            $md = file_get_contents($templateDirectory."/views/create.blade.stub");
+
+            $md = str_replace("__module_name__", $config->moduleName, $md);
+            $md = str_replace("__db_table_name__", $config->dbTableName, $md);
+            $md = str_replace("__controller_class_name__", $config->controllerName, $md);
+            $md = str_replace("__singular_var__", $config->singularVar, $md);
+            $md = str_replace("__singular_cap_var__", $config->singularCapitalVar, $md);
+            $md = str_replace("__module_name_2__", $config->moduleName2, $md);
+
+            // Listing columns
+            $inputFields = "";
+            foreach ($config->module->fields as $field) {
+                $inputFields .= "\t\t\t\t\t@la_input($"."module, '".$field['colname']."')\n";
+            }
+            $inputFields = trim($inputFields);
+            $md = str_replace("__input_fields__", $inputFields, $md);
+
+            file_put_contents(base_path('resources/views/la/'.$config->dbTableName.'/create.blade.php'), $md);  
         }
-        $inputFields = trim($inputFields);
-        $md = str_replace("__input_fields__", $inputFields, $md);
+        elseif($config->insert_type == 'POPUP'){
+            // ============================ Listing / Index ============================
+            $md = file_get_contents($templateDirectory."/views/index.blade.stub");
 
-        file_put_contents(base_path('resources/views/la/'.$config->dbTableName.'/index.blade.php'), $md);
+            $md = str_replace("__module_name__", $config->moduleName, $md);
+            $md = str_replace("__db_table_name__", $config->dbTableName, $md);
+            $md = str_replace("__controller_class_name__", $config->controllerName, $md);
+            $md = str_replace("__singular_var__", $config->singularVar, $md);
+            $md = str_replace("__singular_cap_var__", $config->singularCapitalVar, $md);
+            $md = str_replace("__module_name_2__", $config->moduleName2, $md);
 
+            // Listing columns
+            $inputFields = "";
+            foreach ($config->module->fields as $field) {
+                $inputFields .= "\t\t\t\t\t@la_input($"."module, '".$field['colname']."')\n";
+            }
+            $inputFields = trim($inputFields);
+            $md = str_replace("__input_fields__", $inputFields, $md);
+
+            file_put_contents(base_path('resources/views/la/'.$config->dbTableName.'/index.blade.php'), $md);
+        }
         // ============================ Edit ============================
         $md = file_get_contents($templateDirectory."/views/edit.blade.stub");
 
@@ -296,7 +340,7 @@ class CodeGenerator
 	}
 
     // $config = CodeGenerator::generateConfig($module_name);
-    public static function generateConfig($module, $icon)
+    public static function generateConfig($module, $icon, $insert_type)
     {
         $config = array();
         $config = (object) $config;
@@ -316,7 +360,11 @@ class CodeGenerator
         $config->controllerName = ucfirst(str_plural($module))."Controller";
         $config->singularVar = strtolower(str_singular($module));
         $config->singularCapitalVar = str_replace('_', ' ', ucfirst(str_singular($module)));
-		
+        
+        //new code added by apurv
+        $config->insert_type = $insert_type;
+        $config->routes = strtolower(str_plural($module));
+        
         $module = Module::get($config->moduleName);
         if(!isset($module->id)) {
             throw new Exception("Please run 'php artisan migrate' for 'create_".$config->dbTableName."_table' in order to create CRUD.\nOr check if any problem in Module Name '".$config->moduleName."'.", 1);

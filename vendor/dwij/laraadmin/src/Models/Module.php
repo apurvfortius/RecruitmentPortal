@@ -15,14 +15,14 @@ class Module extends Model
 	protected $table = 'modules';
 	
 	protected $fillable = [
-		"name", "name_db", "label", "view_col", "model", "controller", "is_gen","fa_icon"
+		"name", "name_db", "label", "view_col", "model", "controller", "is_gen","fa_icon", "insert_type"
 	];
 	
 	protected $hidden = [
 		
 	];
 	
-	public static function generateBase($module_name, $icon) {
+	public static function generateBase($module_name, $icon, $insert_type) {
 		
 		$names = LAHelper::generateModuleNames($module_name,$icon);
 		
@@ -46,7 +46,7 @@ class Module extends Model
 				'controller' => $names->controller,
 				'fa_icon' => $names->fa_icon,
 				'is_gen' => $is_gen,
-							 
+				'insert_type' => $insert_type,							 
 			]);
 		}
 		return $module->id;
@@ -316,15 +316,6 @@ class Module extends Model
 						}
 						$table->dropForeign($field->module_obj->name_db."_".$field->colname."_foreign");
 						$table->foreign($field->colname)->references('id')->on($foreign_table_name);
-						// if($field->colname == 'country_id'){
-						// 	$table->foreign($field->colname)->references('countryID')->on($foreign_table_name);
-						// } elseif($field->colname == 'state_id'){
-						// 	$table->foreign($field->colname)->references('stateID')->on($foreign_table_name);
-						// } elseif($field->colname == 'city'){
-						// 	$table->foreign($field->colname)->references('cityID')->on($foreign_table_name);
-						// } else{
-						// 	$table->foreign($field->colname)->references('id')->on($foreign_table_name);
-						// }						
 					} else {
 						$var = $table->integer($field->colname)->unsigned();
 						if($field->defaultvalue == "" || $field->defaultvalue == "0") {
@@ -333,15 +324,6 @@ class Module extends Model
 							$var->default($field->defaultvalue);
 						}
 						$table->foreign($field->colname)->references('id')->on($foreign_table_name);
-						// if($field->colname == 'country_id'){
-						// 	$table->foreign($field->colname)->references('countryID')->on($foreign_table_name);
-						// } elseif($field->colname == 'state_id'){
-						// 	$table->foreign($field->colname)->references('stateID')->on($foreign_table_name);
-						// } elseif($field->colname == 'city'){
-						// 	$table->foreign($field->colname)->references('cityID')->on($foreign_table_name);
-						// } else{
-						// 	$table->foreign($field->colname)->references('id')->on($foreign_table_name);
-						// }
 					}
 				} else if(is_array($popup_vals)) {
 					if($update) {
@@ -813,7 +795,7 @@ class Module extends Model
 		$module = Module::where('name_db', $table_name)->first();
 		if(isset($module)) {
 			$module = $module->toArray();
-			return Module::get($module['name']); 
+			return Module::get($module['name']);
 		} else {
 			return null;
 		}

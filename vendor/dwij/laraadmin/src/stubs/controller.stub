@@ -64,7 +64,22 @@ class __controller_class_name__ extends Controller
 	 */
 	public function create()
 	{
-		//
+		$module = Module::get('__module_name__');
+		if($module->insert_type == 'NEWPAGE'){
+			if(Module::hasAccess("__module_name__", "create")) {			
+				
+					
+				return view('la.__view_folder__.create', [
+					'module' => $module,
+					'view_col' => $this->view_col,
+				]);
+			} else {
+				return redirect(config('laraadmin.adminRoute')."/");
+			}
+		}
+		else{
+			return redirect(config('laraadmin.adminRoute')."/");
+		}
 	}
 
 	/**

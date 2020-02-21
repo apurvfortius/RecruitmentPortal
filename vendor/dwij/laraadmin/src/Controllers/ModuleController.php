@@ -59,7 +59,7 @@ class ModuleController extends Controller
 	 */
 	public function store(Request $request)
 	{
-		$module_id = Module::generateBase($request->name, $request->icon);
+		$module_id = Module::generateBase($request->name, $request->icon, $request->createpage);
 		
 		return redirect()->route(config('laraadmin.adminRoute') . '.modules.show', [$module_id]);
 	}
@@ -203,7 +203,7 @@ class ModuleController extends Controller
 		$module = Module::find($module_id);
 		$module = Module::get($module->name);
 		
-		$config = CodeGenerator::generateConfig($module->name,$module->fa_icon);
+		$config = CodeGenerator::generateConfig($module->name, $module->fa_icon, $module->insert_type);
 		
 		CodeGenerator::createController($config);
 		CodeGenerator::createModel($config);
@@ -249,7 +249,7 @@ class ModuleController extends Controller
 		CodeGenerator::generateMigration($module->name_db, true);
 		
 		// Create Config for Code Generation
-		$config = CodeGenerator::generateConfig($module->name,$module->fa_icon);
+		$config = CodeGenerator::generateConfig($module->name,$module->fa_icon, $module->insert_type);
 		
 		// Generate CRUD
 		CodeGenerator::createController($config);
@@ -282,7 +282,7 @@ class ModuleController extends Controller
 		CodeGenerator::generateMigration($module->name_db, true);
 		
 		// Create Config for Code Generation
-		$config = CodeGenerator::generateConfig($module->name,$module->fa_icon);
+		$config = CodeGenerator::generateConfig($module->name,$module->fa_icon, $module->insert_type);
 		
 		// Generate CRUD
 		CodeGenerator::createController($config);
