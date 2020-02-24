@@ -71,6 +71,11 @@ use Dwij\Laraadmin\Models\Module;
 							<span class="input-group-addon"></span>
 						</div>
 					</div>
+					<div class="form-group">
+						<label for="name">Create Page :</label>
+						{{ Form::label('POPUP', 'Pop Up Modal') }} {{ Form::radio("createpage", 'POPUP', ['class'=>'form-control', 'required' => 'required']) }}
+						{{ Form::label('NEWPAGE', 'New Page') }} {{ Form::radio("createpage", 'NEWPAGE', ['class'=>'form-control', 'required' => 'required']) }}
+					</div>
 				</div>
 			</div>
 			<div class="modal-footer">
