@@ -349,7 +349,8 @@ class LAHelper
 	}
 
 	public static function real_module_name($name){
-		$name = str_replace('_', ' ', $name);
+		//str_singular added by apurv to display singlar name in sidebar menu
+		$name = str_singular(str_replace('_', ' ', $name));
 		return $name;
 	}
 	

@@ -115,6 +115,22 @@ class EmployeesController extends Controller
 			if ($validator->fails()) {
 				return redirect()->back()->withErrors($validator)->withInput();
 			}
+
+			// $city = City::where('cityName', '=', $request->city)->first();
+			// if($city){
+			// 	$request->merge([ 'city' => $city->id]);
+			// }
+			// else{
+			// 	$id = City::create([
+			// 		'cityName' => $request->city,
+			// 		'stateID' => '0',
+			// 		'countryID' => '0',
+			// 		'latitude' => '0',
+			// 		'longitude' => '0',
+			// 	]);
+
+			// 	$request->merge([ 'city' => $id->id]);
+			// }
 			
 			// generate password
 			$password = LAHelper::gen_password();

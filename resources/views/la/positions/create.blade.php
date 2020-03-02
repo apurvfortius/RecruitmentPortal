@@ -73,10 +73,15 @@
 					@la_input($module, 'buy_out')
 					@la_input($module, 'com_turnover')
 					@la_input($module, 'emp_strength')
-					@la_input($module, 'jd_available')
 					@la_input($module, 'website')
 					@la_input($module, 'pos_date')
-					@la_input($module, 'job_description')
+					@la_input($module, 'jd_available')
+
+					<div class="form-group" id="jd_div" style="display:none;">
+						<label for="job_description">Job Description :</label>
+						<textarea class="form-control" placeholder="Enter Job Description" cols="30" rows="3" id="job_description" name="job_description" disabled></textarea>
+					</div>
+					{{-- @la_input($module, 'job_description') --}}
 					@la_input($module, 'pos_given_by')
 					@la_input($module, 'pos_assign_to')
 					{{-- @la_input($module, 'created_by')
@@ -85,6 +90,8 @@
                     <br>
 					<div class="form-group">
 						{!! Form::submit( 'Submit', ['class'=>'btn btn-success']) !!}
+
+						<button class="btn btn-default pull-right"><a href="{{ url(config('laraadmin.adminRoute') . '/positions') }}">Cancel</a></button>
 					</div>
 				{!! Form::close() !!}
 			</div>
@@ -139,21 +146,37 @@
 		}).change();
 	</script>
 
-<script>
-	$( "select[name='company_id']" ).change(function () {
-		var str = "";
-		$( "select[name='company_id'] option:selected" ).each(function() {
-			str += $( this ).val() + " ";
-		});
+	<script>
+		$( "select[name='company_id']" ).change(function () {
+			var str = "";
+			$( "select[name='company_id'] option:selected" ).each(function() {
+				str += $( this ).val() + " ";
+			});
 
-		$.ajax({
-			url : "{{ url(config('laraadmin.adminRoute') . '/getLocations') }}",
-			method:"post",
-			data : {"_token": "{{ csrf_token() }}", id: str },
-			success: function(data){
-				$('#location').html(data);
+			$.ajax({
+				url : "{{ url(config('laraadmin.adminRoute') . '/getLocations') }}",
+				method:"post",
+				data : {"_token": "{{ csrf_token() }}", id: str },
+				success: function(data){
+					$('#location').html(data);
+				}
+			});
+		}).change();
+	</script>
+
+	<script>
+		$( "input[name='jd_available']" ).click(function () {
+			var radioValue = $("input[name='jd_available']:checked").val();
+			if(radioValue == 'Yes'){
+				$('#jd_div').css('display', '');
+				$('#job_description').prop('disabled', false);
 			}
-		});
-	}).change();
-</script>
+			else{
+				$('#jd_div').css('display', 'none');
+				$('#job_description').prop('disabled', true);
+			}
+		}).change();
+	</script>
+
+
 @endpush

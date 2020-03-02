@@ -155,4 +155,14 @@ Route::group(['as' => $as, 'middleware' => ['auth', '2fa', 'permission:ADMIN_PAN
 	/* ================== Positions ================== */
 	Route::resource(config('laraadmin.adminRoute') . '/positions', 'LA\PositionsController');
 	Route::get(config('laraadmin.adminRoute') . '/position_dt_ajax', 'LA\PositionsController@dtajax');
+
+	/* ================== Candidates ================== */
+	Route::resource(config('laraadmin.adminRoute') . '/candidates', 'LA\CandidatesController');
+	Route::get(config('laraadmin.adminRoute') . '/candidate_dt_ajax', 'LA\CandidatesController@dtajax');
+	Route::post(config('laraadmin.adminRoute') . '/getCity', 'LA\CandidatesController@getCity');
+
+	/* ================== Candidate_Experiences ================== */
+	Route::resource(config('laraadmin.adminRoute') . '/candidate_experiences', 'LA\Candidate_ExperiencesController');
+	Route::get(config('laraadmin.adminRoute') . '/candidate_experience_dt_ajax', 'LA\Candidate_ExperiencesController@dtajax');
+	Route::get(config('laraadmin.adminRoute') . '/candidate_experiences/{id}/delete', 'LA\Candidate_ExperiencesController@delete');
 });

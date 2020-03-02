@@ -1,14 +1,14 @@
 @extends("la.layouts.app")
 
-@section("contentheader_title", "Positions")
-@section("contentheader_description", "Positions listing")
-@section("section", "Positions")
+@section("contentheader_title", "Candidate Experiences")
+@section("contentheader_description", "Candidate Experiences listing")
+@section("section", "Candidate Experiences")
 @section("sub_section", "Listing")
-@section("htmlheader_title", "Positions Listing")
+@section("htmlheader_title", "Candidate Experiences Listing")
 
 @section("headerElems")
-@la_access("Positions", "create")
-	<a class="btn btn-success btn-sm pull-right" href="{{ url('admin/positions/create') }}" >Add Position</a>
+@la_access("Candidate_Experiences", "create")
+	<a class="btn btn-success btn-sm pull-right" href="{{ url('admin/candidate_experiences/create') }}" >Add Candidate Experience</a>
 @endla_access
 @endsection
 
@@ -57,7 +57,7 @@ $(function () {
 	$("#example1").DataTable({
 		processing: true,
         serverSide: true,
-        ajax: "{{ url(config('laraadmin.adminRoute') . '/position_dt_ajax') }}",
+        ajax: "{{ url(config('laraadmin.adminRoute') . '/candidate_experience_dt_ajax') }}",
 		language: {
 			lengthMenu: "_MENU_",
 			search: "_INPUT_",
@@ -67,7 +67,7 @@ $(function () {
 		columnDefs: [ { orderable: false, targets: [-1] }],
 		@endif
 	});
-	$("#position-add-form").validate({
+	$("#candidate_experience-add-form").validate({
 		
 	});
 });
