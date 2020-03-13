@@ -33,6 +33,10 @@
 					{{-- @la_form($module) --}}
 					
 					{{-- Position Code will be created while inserting --}}
+					<div class="form-group">
+						<label for="position_code">Position Code* :</label>
+						<input class="form-control valid" readonly disabled type="text" name="position_code" value="{{ $number }}">
+					</div>
 					{{-- @la_input($module, 'position_code') --}}
 					
 					@la_input($module, 'company_id')
@@ -161,6 +165,15 @@
 					$('#location').html(data);
 				}
 			});
+
+			$.ajax({
+				url : "{{ url(config('laraadmin.adminRoute') . '/getWebsite') }}",
+				method:"post",
+				data : {"_token": "{{ csrf_token() }}", id: str },
+				success: function(data){
+					$('input[name="website"]').val(data);
+				}
+			});
 		}).change();
 	</script>
 
@@ -177,6 +190,4 @@
 			}
 		}).change();
 	</script>
-
-
 @endpush

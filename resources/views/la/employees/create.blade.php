@@ -31,7 +31,11 @@
 			<div class="col-md-8 col-md-offset-2">
 				{!! Form::open(['action' => 'LA\EmployeesController@store', 'id' => 'employee-add-form']) !!}
 					{{-- @la_form($module) --}}
-						
+
+					<div class="form-group">
+						<label for="employee_code">Employee Code* :</label>
+						<input class="form-control valid" readonly disabled type="text" name="employee_code" value="{{ $number }}">
+					</div>
 					{{-- @la_input($module, 'employee_code') --}}
 					@la_input($module, 'name')
 					@la_input($module, 'gender')
@@ -39,26 +43,35 @@
 					@la_input($module, 'email')
 					@la_input($module, 'date_hire')
 					@la_input($module, 'date_left')
-					@la_input($module, 'country_id')
 					
+					{{-- @la_input($module, 'country_id')
+					@la_input($module, 'state_id')
+					@la_input($module, 'city') --}}
+
+					<div class="form-group">
+						<label for="country_id">Country* :</label>
+						<input list="country_list" class="form-control" placeholder="Enter Country" data-rule-minlength="1" data-rule-maxlength="255" required="1" name="country_id" type="text" value="" aria-required="true">
+						<datalist id="country_list">
+						</datalist>
+					</div>
+
 					<div class="form-group">
 						<label for="state_id">State* :</label>
-						<select class="form-control" required="1" data-placeholder="Select State" rel="select2" name="state_id" id="state_id">
-							<option value="">Select State</option>
-						</select>
+						<input list="state_list" class="form-control" placeholder="Enter State" data-rule-minlength="1" data-rule-maxlength="255" required="1" name="state_id" type="text" value="" aria-required="true">
+						<datalist id="state_list">
+						</datalist>
 					</div>
 
 					<div class="form-group">
 						<label for="city">City* :</label>
-						<select class="form-control" required="1" data-placeholder="Select City" rel="select2" name="city" id="city">
-							<option value="">Select City</option>
-						</select>
+						<input list="city_list" class="form-control" placeholder="Enter State" data-rule-minlength="1" data-rule-maxlength="255" required="1" name="city" type="text" value="" aria-required="true">
+						<datalist id="city_list">
+						</datalist>
 					</div>
-
-					{{-- @la_input($module, 'state_id')
-					@la_input($module, 'city') --}}
-					@la_input($module, 'crnt_address')
 					
+					
+					@la_input($module, 'crnt_address')
+					@la_input($module, 'pr_address')
 					
                     <div class="form-group">
 						<label for="role">Role* :</label>
@@ -92,36 +105,45 @@ $(function () {
 });
 </script>
 <script>
-	$( "select[name='country_id']" ).change(function () {
-		var str = "";
-		$( "select[name='country_id'] option:selected" ).each(function() {
-		  str += $( this ).val() + " ";
-		});
+	$( "input[name='country_id']" ).keyup(function () {
+		var str = $( "input[name='country_id']").val();
 
 		$.ajax({
-			url : "{{ url(config('laraadmin.adminRoute') . '/getStates') }}",
+			url : "{{ url(config('laraadmin.adminRoute') . '/getCountry') }}",
 			method:"post",
 			data : {"_token": "{{ csrf_token() }}", id: str },
 			success: function(data){
-				$('#state_id').html(data);
+				$('#country_list').html(data);
 			}
 		});
 	}).change();
 </script>
 
 <script>
-	$( "select[name='state_id']" ).change(function () {
-		var str = "";
-		$( "select[name='state_id'] option:selected" ).each(function() {
-		  str += $( this ).val() + " ";
+	$( "input[name='country_id']" ).change(function () {
+		var str = $( "input[name='country_id']" ).val();
+
+		$.ajax({
+			url : "{{ url(config('laraadmin.adminRoute') . '/getStates') }}",
+			method:"post",
+			data : {"_token": "{{ csrf_token() }}", id: str },
+			success: function(data){
+				$('#state_list').html(data);
+			}
 		});
+	}).change();
+</script>
+
+<script>
+	$( "input[name='state_id']" ).change(function () {
+		var str = $( "input[name='state_id']" ).val();
 
 		$.ajax({
 			url : "{{ url(config('laraadmin.adminRoute') . '/getCity') }}",
 			method:"post",
-			data : {"_token": "{{ csrf_token() }}", id: str },
+			data : {"_token": "{{ csrf_token() }}", id: str},
 			success: function(data){
-				$('#city').html(data);
+				$('#city_list').html(data);
 			}
 		});
 	}).change();

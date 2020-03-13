@@ -35,22 +35,29 @@
 					
 					{{-- @la_input($module, 'company_id') --}}
 					@la_input($module, 'type')
-					@la_input($module, 'country_id')
-					{{-- @la_input($module, 'state_id')
+					{{-- @la_input($module, 'country_id')
+					@la_input($module, 'state_id')
 					@la_input($module, 'city_id') --}}
 
 					<div class="form-group">
+						<label for="country_id">Country* :</label>
+						<input list="country_list" value="{{ $data['country'] }}" class="form-control" placeholder="Enter Country" data-rule-minlength="1" data-rule-maxlength="255" required="1" name="country_id" type="text" value="" aria-required="true">
+						<datalist id="country_list">
+						</datalist>
+					</div>
+
+					<div class="form-group">
 						<label for="state_id">State* :</label>
-						<select class="form-control" onchange="getCity()" required="1" data-placeholder="Select State" rel="select2" name="state_id" id="state_id">
-							<option value="">Select State</option>
-						</select>
+						<input list="state_list" value="{{ $data['state'] }}" class="form-control" placeholder="Enter State" data-rule-minlength="1" data-rule-maxlength="255" required="1" name="state_id" type="text" value="" aria-required="true">
+						<datalist id="state_list">
+						</datalist>
 					</div>
 
 					<div class="form-group">
 						<label for="city_id">City* :</label>
-						<select class="form-control" required="1" data-placeholder="Select City" rel="select2" name="city_id" id="city_id">
-							<option value="">Select City</option>
-						</select>
+						<input list="city_list" value="{{ $data['city'] }}" class="form-control" placeholder="Enter City" data-rule-minlength="1" data-rule-maxlength="255" required="1" name="city_id" type="text" value="" aria-required="true">
+						<datalist id="city_list">
+						</datalist>
 					</div>
 					@la_input($module, 'address')
 					@la_input($module, 'contact_persopn')

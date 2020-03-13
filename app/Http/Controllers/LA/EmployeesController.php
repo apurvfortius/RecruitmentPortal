@@ -78,13 +78,21 @@ class EmployeesController extends Controller
 		if(Module::hasAccess("Employees", "create")) {
 			$module = Module::get('Employees');
 			
+			$last_id = Employee::orderBy('id', 'desc')->first();			
+			if($last_id){
+				$no = explode("_", $last_id->employee_code);
+				$number = "NCS_".sprintf("%04s", $no[1] + 1);
+			}
+			else{
+				$number = "NCS_".sprintf("%04s", 1);
+			}
 			// Get User Table Information
 			//$user = User::where('context_id', '=', $id)->firstOrFail();
 			
 			return view('la.employees.create', [
 				'module' => $module,
 				'view_col' => $this->view_col,
-				//'user' => $user,
+				'number' => $number,
 			]);
 		} else {
 			return redirect(config('laraadmin.adminRoute')."/");
@@ -116,25 +124,20 @@ class EmployeesController extends Controller
 				return redirect()->back()->withErrors($validator)->withInput();
 			}
 
-			// $city = City::where('cityName', '=', $request->city)->first();
-			// if($city){
-			// 	$request->merge([ 'city' => $city->id]);
-			// }
-			// else{
-			// 	$id = City::create([
-			// 		'cityName' => $request->city,
-			// 		'stateID' => '0',
-			// 		'countryID' => '0',
-			// 		'latitude' => '0',
-			// 		'longitude' => '0',
-			// 	]);
-
-			// 	$request->merge([ 'city' => $id->id]);
-			// }
+			//check and store country
+			$country_id = parent::getCountryID($request->country_id);
+			$request->merge([ 'country_id' => $country_id['id']]);
 			
+			//check and store state
+			$state_id = parent::getStateID($request->state_id, $country_id['countryID']);
+			$request->merge([ 'state_id' => $state_id]);
+
+			//check and store city
+			$city = parent::getCityID($request->city, $country_id['countryID'], $state_id);
+			$request->merge([ 'city' => $city]);
+
 			// generate password
 			$password = LAHelper::gen_password();
-			
 			// Create Employee
 			$employee_id = Module::insert("Employees", $request);
 
@@ -228,12 +231,16 @@ class EmployeesController extends Controller
 	public function edit($id)
 	{
 		if(Module::hasAccess("Employees", "edit")) {
-			
 			$employee = Employee::find($id);
 			if(isset($employee->id)) {
 				$module = Module::get('Employees');
 				
 				$module->row = $employee;
+				
+				$data = array();
+				$data['country'] = parent::getNameByID($employee->country_id, 'Country');
+				$data['state'] = parent::getNameByID($employee->state_id, 'State');
+				$data['city'] = parent::getNameByID($employee->city, 'City'); 
 				
 				// Get User Table Information
 				$user = User::where('context_id', '=', $id)->firstOrFail();
@@ -242,7 +249,7 @@ class EmployeesController extends Controller
 					'module' => $module,
 					'view_col' => $this->view_col,
 					'user' => $user,
-				])->with('employee', $employee);
+				])->with(['employee' => $employee, 'data' => $data]);
 			} else {
 				return view('errors.404', [
 					'record_id' => $id,
@@ -272,6 +279,18 @@ class EmployeesController extends Controller
 			if ($validator->fails()) {
 				return redirect()->back()->withErrors($validator)->withInput();;
 			}
+
+			//check and store country
+			$country_id = parent::getCountryID($request->country_id);
+			$request->merge([ 'country_id' => $country_id['id']]);
+			
+			//check and store state
+			$state_id = parent::getStateID($request->state_id, $country_id['countryID']);
+			$request->merge([ 'state_id' => $state_id]);
+
+			//check and store city
+			$city = parent::getCityID($request->city, $country_id['countryID'], $state_id);
+			$request->merge([ 'city' => $city]);
 			
 			$employee_id = Module::updateRow("Employees", $request, $id);
         	

@@ -1,1 +1,6 @@
 .action_btn_table {margin-left: 3px;}
+
+.contacts-list-info span {
+    display: inline-block;
+    margin: 0 10px 0 0;
+}

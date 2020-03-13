@@ -95,8 +95,8 @@
 					@la_input($module, 'skype')
 					@la_input($module, 'remark')
 					@la_input($module, 'resume')
-					@la_input($module, 'created_by')
-					@la_input($module, 'last_edited_by')
+					{{-- @la_input($module, 'created_by')
+					@la_input($module, 'last_edited_by') --}}
 
 
 					<div class="row multi-field-wrapper" id="p_scents">
@@ -205,7 +205,7 @@ $(function () {
 	$( "input[name='city']" ).change(function () {
 		var str = $("input[name='city']").val();
 		$.ajax({
-			url : "{{ url(config('laraadmin.adminRoute') . '/getCity') }}",
+			url : "{{ url(config('laraadmin.adminRoute') . '/candidates/getCity') }}",
 			method:"post",
 			data : {"_token": "{{ csrf_token() }}", str: str },
 			success: function(data){

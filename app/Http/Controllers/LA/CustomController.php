@@ -13,6 +13,7 @@ use App\Models\City;
 use App\Models\Branch;
 use App\Models\Country;
 use App\Models\State;
+use App\Models\Company;
 
 class CustomController extends Controller
 {
@@ -46,7 +47,8 @@ class CustomController extends Controller
 		return $out;
     }
 
-    public function getLocations(Request $request)
+	//used in position module
+	public function getLocations(Request $request)
     {
         $result = Branch::where('company_id', $request->id)->get();
         $out = '';
@@ -62,18 +64,36 @@ class CustomController extends Controller
 		}
 		return $out;
 	}
+
+	//used in position module
+	public function getWebsite(Request $request)
+    {
+        $result = Company::find($request->id);
+		return $result->website;
+	}
+
+	public function getCountry(Request $request)
+	{
+		$result = Country::where('countryName', 'like', '%'.$request->id.'%')->get();
+
+		$html = "";
+		foreach($result as $item){
+			$html .= "<option value=".$item->countryName.">";
+		}
+		return $html;
+	}
 	
 	public function getState(Request $request)
 	{
-		$id = Country::find($request->id);
-		$result = State::where('countryID', $id->countryID)->get();
+		$id = Country::where('countryName', $request->id)->get();
+		$result = State::where('countryID', $id[0]->countryID)->get();
 		$out = '';
 		foreach($result as $item){
 			if(isset($request->selected) && !empty($request->selected) && $request->selected == $item->id){
-				$out .= "<option value=".$item->id." selected>".$item->stateName."</option>";
+				$out .= "<option value=".$item->stateName." selected>";
 			}
 			else{
-				$out .= "<option value=".$item->id.">".$item->stateName."</option>";
+				$out .= "<option value=".$item->stateName.">";
 			}			
 		}
 		return $out;
@@ -81,14 +101,15 @@ class CustomController extends Controller
 
 	public function getCity(Request $request)
 	{
-		$result = City::where('stateID', $request->id)->get();
+		$id = State::where('stateName', $request->id)->get();
+		$result = City::where('stateID', $id[0]->id)->get();
 		$out = '';
 		foreach($result as $item){
 			if(isset($request->selected) && !empty($request->selected) && $request->selected == $item->id){
-				$out .= "<option value=".$item->id." selected>".$item->cityName."</option>";
+				$out .= "<option value=".$item->cityName." selected>";
 			}
 			else{
-				$out .= "<option value=".$item->id.">".$item->cityName."</option>";
+				$out .= "<option value=".$item->cityName.">";
 			}			
 		}
 		return $out;

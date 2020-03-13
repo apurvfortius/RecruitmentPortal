@@ -94,9 +94,9 @@ Route::group(['as' => $as, 'middleware' => ['auth', '2fa', 'permission:ADMIN_PAN
 	Route::post(config('laraadmin.adminRoute') . '/getDepartments', 'LA\CustomController@getDepartments');
 	Route::post(config('laraadmin.adminRoute') . '/getSubDepartments', 'LA\CustomController@getSubDepartments');
 	Route::post(config('laraadmin.adminRoute') . '/getLocations', 'LA\CustomController@getLocations');
+	Route::post(config('laraadmin.adminRoute') . '/getCountry', 'LA\CustomController@getCountry');
 	Route::post(config('laraadmin.adminRoute') . '/getStates', 'LA\CustomController@getState');
 	Route::post(config('laraadmin.adminRoute') . '/getCity', 'LA\CustomController@getCity');
-
 
 	/* ================== Countries ================== */
 	Route::resource(config('laraadmin.adminRoute') . '/countries', 'LA\CountriesController');
@@ -155,14 +155,27 @@ Route::group(['as' => $as, 'middleware' => ['auth', '2fa', 'permission:ADMIN_PAN
 	/* ================== Positions ================== */
 	Route::resource(config('laraadmin.adminRoute') . '/positions', 'LA\PositionsController');
 	Route::get(config('laraadmin.adminRoute') . '/position_dt_ajax', 'LA\PositionsController@dtajax');
+	Route::post(config('laraadmin.adminRoute') . '/getWebsite', 'LA\CustomController@getWebsite');
 
 	/* ================== Candidates ================== */
 	Route::resource(config('laraadmin.adminRoute') . '/candidates', 'LA\CandidatesController');
 	Route::get(config('laraadmin.adminRoute') . '/candidate_dt_ajax', 'LA\CandidatesController@dtajax');
-	Route::post(config('laraadmin.adminRoute') . '/getCity', 'LA\CandidatesController@getCity');
+	Route::post(config('laraadmin.adminRoute') . '/candidates/getCity', 'LA\CandidatesController@getCity');
 
 	/* ================== Candidate_Experiences ================== */
 	Route::resource(config('laraadmin.adminRoute') . '/candidate_experiences', 'LA\Candidate_ExperiencesController');
 	Route::get(config('laraadmin.adminRoute') . '/candidate_experience_dt_ajax', 'LA\Candidate_ExperiencesController@dtajax');
 	Route::get(config('laraadmin.adminRoute') . '/candidate_experiences/{id}/delete', 'LA\Candidate_ExperiencesController@delete');
+
+	/* ================== Assign_Positions ================== */
+	Route::get(config('laraadmin.adminRoute') . '/assign_candidate/{id}', 'LA\Assign_PositionsController@showAssignPage');
+	//Route::resource(config('laraadmin.adminRoute') . '/assign_positions', 'LA\Assign_PositionsController');
+	//Route::get(config('laraadmin.adminRoute') . '/assign_position_dt_ajax', 'LA\Assign_PositionsController@dtajax');
+	Route::post(config('laraadmin.adminRoute') . '/getBasicSearch/{search}', 'LA\Assign_PositionsController@getBasicSearch');
+	Route::post(config('laraadmin.adminRoute') . '/getAdvanceSearch/{search}', 'LA\Assign_PositionsController@getAdvanceSearch');
+	Route::post(config('laraadmin.adminRoute') . '/assignCandidate', 'LA\Assign_PositionsController@assignCandidate');
+	Route::post(config('laraadmin.adminRoute') . '/unassignCandidate', 'LA\Assign_PositionsController@unassignCandidate');
+
+	Route::get(config('laraadmin.adminRoute') . '/assign_position/{id}', 'LA\Assign_PositionsController@showAssignPositionPage');
+	Route::post(config('laraadmin.adminRoute') . '/assignPosition', 'LA\Assign_PositionsController@assignPosition');
 });

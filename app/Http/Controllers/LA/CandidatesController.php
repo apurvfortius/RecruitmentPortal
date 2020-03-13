@@ -98,7 +98,8 @@ class CandidatesController extends Controller
 	{
 		//return $request;
 		if(Module::hasAccess("Candidates", "create")) {
-		
+			$request->merge([ 'created_by' => Auth::user()->id, 'last_edited_by' => Auth::user()->id ]);
+
 			$rules = Module::validateRules("Candidates", $request);
 			
 			$validator = Validator::make($request->all(), $rules);
@@ -225,7 +226,7 @@ class CandidatesController extends Controller
 	public function update(Request $request, $id)
 	{
 		if(Module::hasAccess("Candidates", "edit")) {
-			
+			$request->merge([ 'last_edited_by' => Auth::user()->id ]);
 			$rules = Module::validateRules("Candidates", $request, true);
 			
 			$validator = Validator::make($request->all(), $rules);
@@ -332,6 +333,8 @@ class CandidatesController extends Controller
 			
 			if($this->show_action) {
 				$output = '';
+
+				$output .= '<a href="'.url(config('laraadmin.adminRoute') . '/assign_position/'.$data->data[$i][0]).'" class="btn btn-info btn-xs" style="display:inline; padding:2px 5px 3px 5px;"><i class="fa fa-plus"></i></a>';
 				if(Module::hasAccess("Candidates", "edit")) {
 					$output .= '<a href="'.url(config('laraadmin.adminRoute') . '/candidates/'.$data->data[$i][0].'/edit').'" class="btn btn-warning btn-xs" style="display:inline;padding:2px 5px 3px 5px;"><i class="fa fa-edit"></i></a>';
 				}

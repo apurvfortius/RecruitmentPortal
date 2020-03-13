@@ -9,18 +9,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class State extends Model
+class Assign_Position extends Model
 {
     use SoftDeletes;
 	
-	protected $table = 'states';
+	protected $table = 'assign_positions';
 	
 	protected $hidden = [
         
-	];
-	
-	protected $primaryKey = 'id';
-
+    ];
 
 	protected $guarded = [];
 

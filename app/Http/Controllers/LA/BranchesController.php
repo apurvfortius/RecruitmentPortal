@@ -98,7 +98,18 @@ class BranchesController extends Controller
 			if ($validator->fails()) {
 				return redirect()->back()->withErrors($validator)->withInput();
 			}
+			//check and store country
+			$country_id = parent::getCountryID($request->country_id);
+			$request->merge([ 'country_id' => $country_id['id']]);
 			
+			//check and store state
+			$state_id = parent::getStateID($request->state_id, $country_id['countryID']);
+			$request->merge([ 'state_id' => $state_id]);
+
+			//check and store city
+			$city = parent::getCityID($request->city_id, $country_id['countryID'], $state_id);
+			$request->merge([ 'city_id' => $city]);
+
 			$insert_id = Module::insert("Branches", $request);
 			
 			return redirect()->route(config('laraadmin.adminRoute') . '.companies.index');
@@ -154,11 +165,16 @@ class BranchesController extends Controller
 				$module = Module::get('Branches');
 				
 				$module->row = $branch;
+
+				$data = array();
+				$data['country'] = parent::getNameByID($branch->country_id, 'Country');
+				$data['state'] = parent::getNameByID($branch->state_id, 'State');
+				$data['city'] = parent::getNameByID($branch->city_id, 'City'); 
 				
 				return view('la.branches.edit', [
 					'module' => $module,
 					'view_col' => $this->view_col,
-				])->with('branch', $branch);
+				])->with(['branch' => $branch, 'data' => $data]);
 			} else {
 				return view('errors.404', [
 					'record_id' => $id,
@@ -188,6 +204,18 @@ class BranchesController extends Controller
 			if ($validator->fails()) {
 				return redirect()->back()->withErrors($validator)->withInput();;
 			}
+
+			//check and store country
+			$country_id = parent::getCountryID($request->country_id);
+			$request->merge([ 'country_id' => $country_id['id']]);
+			
+			//check and store state
+			$state_id = parent::getStateID($request->state_id, $country_id['countryID']);
+			$request->merge([ 'state_id' => $state_id]);
+
+			//check and store city
+			$city = parent::getCityID($request->city_id, $country_id['countryID'], $state_id);
+			$request->merge([ 'city_id' => $city]);
 			
 			$insert_id = Module::updateRow("Branches", $request, $id);
 			

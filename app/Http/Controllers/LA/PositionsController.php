@@ -68,10 +68,20 @@ class PositionsController extends Controller
 			$module = Module::get('Positions');
 			
 			$module->row = $position;
-			
+			$last_id = Position::orderBy('id', 'desc')->first();			
+			if($last_id){
+				$no = explode("_", $last_id->position_code);
+				
+				$number = $no[2] + 1;
+				$number = "NCS_".date('Y')."_".sprintf("%05s", $number);
+			}
+			else{
+				$number = "NCS_".date('Y')."_".sprintf("%05s", 1);
+			}
 			return view('la.positions.create', [
 				'module' => $module,
 				'view_col' => $this->view_col,
+				'number' => $number,
 			]);
 		} else {
 			return redirect(config('laraadmin.adminRoute')."/");
@@ -89,10 +99,12 @@ class PositionsController extends Controller
 		if(Module::hasAccess("Positions", "create")) {
 			$last_id = Position::orderBy('id', 'desc')->first();			
 			if($last_id){
-				$number = sprintf("%06s", $last_id);
+				$no = explode("_", $last_id->position_code);
+				$number = $no[2] + 1;
+				$number = sprintf("%05s", $number);
 			}
 			else{
-				$number = sprintf("%06s", 1);
+				$number = sprintf("%05s", 1);
 			}
 			$request->request->add(['position_code' => "NCS_".date('Y')."_".$number]);
 			//$request->position_code = "NCS_".date('Y')."_".$number;
@@ -251,8 +263,10 @@ class PositionsController extends Controller
 			
 			if($this->show_action) {
 				$output = '';
+				$output .= '<a href="'.url(config('laraadmin.adminRoute') . '/assign_candidate/'.$data->data[$i][0]).'" class="btn btn-info btn-xs" style="display:inline; padding:2px 5px 3px 5px;"><i class="fa fa-plus"></i></a>';
+				//$output .= '<a href="'.url(config('laraadmin.adminRoute') . '/assign_positions/'.$data->data[$i][0].'/show').'" class="btn btn-success btn-xs" style="display:inline; padding:2px 5px 3px 5px;"><i class="fa fa-eye"></i></a>';
 				if(Module::hasAccess("Positions", "edit")) {
-					$output .= '<a href="'.url(config('laraadmin.adminRoute') . '/positions/'.$data->data[$i][0].'/edit').'" class="btn btn-warning btn-xs" style="display:inline;padding:2px 5px 3px 5px;"><i class="fa fa-edit"></i></a>';
+					$output .= '<a href="'.url(config('laraadmin.adminRoute') . '/positions/'.$data->data[$i][0].'/edit').'" class="btn btn-warning btn-xs" style="display:inline; padding:2px 5px 3px 5px;"><i class="fa fa-edit"></i></a>';
 				}
 				
 				if(Module::hasAccess("Positions", "delete")) {
