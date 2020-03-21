@@ -103,6 +103,10 @@
 		</div>
 	</div>
 	
+	<div class="alert alert-success">
+		{{ $request->session()->get('assigned') }}
+	</div>
+	
 	<div class="alert alert-success alert-dismissible" id="message" style="display:none;">
 		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
 		<h5><i class="icon fas fa-check"></i> Alert!</h5>
@@ -238,6 +242,7 @@
 			success: function (data) { 
 				$('#message').css('display', '');
 				$('#message label').html(data.msg);
+				hideAlert();
 			}
 		});
 	}
@@ -250,6 +255,8 @@
 			success: function (data) { 
 				$('#message').css('display', '');
 				$('#message label').html(data.msg);
+
+				hideAlert();
 			}
 		});
 	}
@@ -260,5 +267,12 @@
 			getList(form, '/admin/getAdvanceSearch/Candidate', 'advance');
 		});
 	});
+
+	function hideAlert() {
+		$("#message").fadeTo(2000, 500).slideUp(500, function() {
+			$("#message").slideUp(500);
+			$('#message').css('display', 'none');
+		});
+	}
 </script>
 @endpush

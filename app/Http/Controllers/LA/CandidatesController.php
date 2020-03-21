@@ -20,13 +20,17 @@ use Dwij\Laraadmin\Models\ModuleFields;
 use App\Models\Candidate;
 use App\Models\Candidate_Experience;
 use App\Models\City;
+use App\Models\Assign_Position;
 
 class CandidatesController extends Controller
 {
 	public $show_action = true;
 	public $view_col = 'name';
-	public $listing_cols = ['id', 'name', 'city', 'native_place', 'crnnt_desgnation', 'report_to', 'total_experience', 'qualification_ug', 'qualification_pg', 'crrnt_ctc', 'expected_ctc', 'notice_period', 'notice_buy_out', 'age', 'family_detail', 'recruitor', 'recruitor_note', 'mobile_1', 'mobile_2', 'email_1', 'email_2', 'skype', 'remark', 'resume', 'created_by', 'last_edited_by'];
+	public $listing_cols = ['id', 'name', 'city', 'total_experience', 'qualification_ug', 'qualification_pg', 'crrnt_ctc', 'expected_ctc', 'notice_period', 'mobile_1', 'email_1', 'skype'];
+	
 	public $listing_cols2 = ['id', 'candidate_id', 'company', 'working_from', 'working_to', 'job_profile'];
+	
+	public $position_cols = ['id', 'position_code', 'company_id', 'title', 'position_level', 'no_position', 'jd_available', 'website', 'pos_date', 'job_description'];
 
 	public function __construct() {
 		// Field Access of Listing Columns
@@ -173,6 +177,7 @@ class CandidatesController extends Controller
 					'listing_cols2' => $this->listing_cols2,
 					'moduleCandidate' => $this->moduleCandidate,
 					'show_actions' => $this->show_action,
+					'position_cols' => $this->position_cols
 				])->with(['candidate' => $candidate, 'id' => $id]);
 			} else {
 				return view('errors.404', [
@@ -331,6 +336,9 @@ class CandidatesController extends Controller
 				// }
 			}
 			
+			$res = Assign_Position::where('candidate_id', $data->data[$i][0])->count();					
+			$data->data[$i][] = $res;
+			
 			if($this->show_action) {
 				$output = '';
 
@@ -361,5 +369,47 @@ class CandidatesController extends Controller
 			$html .= "<option value=".$item->cityName.">";
 		}
 		return $html;
+	}
+
+	public function assign_candidate_dt_ajax($id)
+	{
+		$values = DB::table('candidates')->select($this->listing_cols)->whereNull('deleted_at');
+		$out = Datatables::of($values)->make();
+		$data = $out->getData();
+
+		$fields_popup = ModuleFields::getModuleFields('Candidates');
+		
+		for($i=0; $i < count($data->data); $i++) {
+			for ($j=0; $j < count($this->listing_cols); $j++) { 
+				$col = $this->listing_cols[$j];
+				if($fields_popup[$col] != null && starts_with($fields_popup[$col]->popup_vals, "@")) {
+					$data->data[$i][$j] = ModuleFields::getFieldValue($fields_popup[$col], $data->data[$i][$j]);
+				}
+				if($col == $this->view_col) {
+					$data->data[$i][$j] = '<a href="'.url(config('laraadmin.adminRoute') . '/candidates/'.$data->data[$i][0]).'">'.$data->data[$i][$j].'</a>';
+				}
+				// else if($col == "author") {
+				//    $data->data[$i][$j];
+				// }
+			}
+			
+			if($this->show_action) {
+				$output = '';
+
+				$output .= '<a href="'.url(config('laraadmin.adminRoute') . '/assign_position/'.$data->data[$i][0]).'" class="btn btn-info btn-xs" style="display:inline; padding:2px 5px 3px 5px;"><i class="fa fa-plus"></i></a>';
+				if(Module::hasAccess("Candidates", "edit")) {
+					$output .= '<a href="'.url(config('laraadmin.adminRoute') . '/candidates/'.$data->data[$i][0].'/edit').'" class="btn btn-warning btn-xs" style="display:inline;padding:2px 5px 3px 5px;"><i class="fa fa-edit"></i></a>';
+				}
+				
+				if(Module::hasAccess("Candidates", "delete")) {
+					$output .= Form::open(['route' => [config('laraadmin.adminRoute') . '.candidates.destroy', $data->data[$i][0]], 'method' => 'delete', 'style'=>'display:inline']);
+					$output .= ' <button class="btn btn-danger btn-xs" type="submit"><i class="fa fa-times"></i></button>';
+					$output .= Form::close();
+				}
+				$data->data[$i][] = (string)$output;
+			}
+		}
+		$out->setData($data);
+		return $out;
 	}
 }

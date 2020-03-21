@@ -20,16 +20,16 @@ use Dwij\Laraadmin\Models\ModuleFields;
 use App\Models\Assign_Position;
 use App\Models\Position;
 use App\Models\Candidate;
+use App\Models\Admin_Notice;
 
 class Assign_PositionsController extends Controller
 {
-	public $show_action = true;
+	public $show_action = true; 
 	public $view_col = 'name';
 	public $listing_cols = ['id', 'name', 'city', 'cityName', 'crnnt_desgnation', 'experience_title', 'crrnt_ctc', 'expected_ctc', 'notice_period', 'mobile_1', 'email_1', 'skype', 'assigned_position', 'assigned_position_id'];
-
-	//public $position_cols = ['id', 'position_code', 'company_id', 'title', 'position_level', 'industry_id', 'department_id', 'sub_department_id', 'report_to', 'team_size', 'location', 'budget_id', 'qualification_ug', 'qualification_pg', 'no_position', 'req_exp_id', 'urgency_pos', 'buy_out', 'com_turnover', 'emp_strength'];
-
-	//public $listing_label = ['Action', 'Name', 'City', 'Current Designation', 'Experience', 'Current CTC', 'Expected CTC', 'Notice Period', 'Mobile', 'Email', 'Skype'];
+	public $candidate_cols = ['candidates.id', 'candidates.name', 'candidates.city', 'candidates.total_experience', 'candidates.crrnt_ctc', 'candidates.expected_ctc', 'candidates.notice_period', 'candidates.mobile_1', 'candidates.email_1', 'candidates.skype', 'assign_positions.position_id'];
+	
+	public $position_cols = ['position_view.id', 'position_view.position_code', 'position_view.company_title', 'position_view.title', 'position_view.position_level_title', 'position_view.no_position', 'position_view.jd_available', 'position_view.website', 'position_view.pos_date', 'position_view.job_description'];
 	
 	public function __construct() {
 		// Field Access of Listing Columns
@@ -41,6 +41,8 @@ class Assign_PositionsController extends Controller
 		} else {
 			//$this->listing_cols = ModuleFields::listingColumnAccessScan('Candidates', $this->listing_cols);
 		}
+		$data = Admin_Notice::whereNull('read_at')->get();           
+        session(['key' => $data]);
 	}
 
 	//below methods used by position module
@@ -116,39 +118,85 @@ class Assign_PositionsController extends Controller
 						->orWhere('sub_department_title', 'LIKE', '%'.$string.'%');
 			})->groupBy('id')->paginate(10);
 			$data = array();
-			$data = ['html' => static::createHtmlPositionResponse($result), 'result' => $result];
+			$data = ['html' => static::createHtmlPositionResponse($result, $request->id), 'result' => $result];
 			return response()->json($data, 200);
 		}		
 	}
 
-	public function getAdvanceSearch(Request $request)
+	public function getAdvanceSearch(Request $request, $search)
 	{
-		$query = DB::table('candidate_view')->select($this->listing_cols);
-		if($request->has('city')){
-			$query->whereIn('city', $request->city);				
-		}
+		if($search == 'Candidate'){
+			$query = DB::table('candidate_view')->select($this->listing_cols);
+			if($request->has('city')){
+				$query->whereIn('city', $request->city);				
+			}
 
-		if($request->has('total_experience')){
-			$query->whereIn('total_experience', $request->total_experience);				
-		}
+			if($request->has('total_experience')){
+				$query->whereIn('total_experience', $request->total_experience);				
+			}
 
-		if($request->has('qualification_ug')){
-			$query->whereIn('qualification_ug', $request->qualification_ug);				
-		}
+			if($request->has('qualification_ug')){
+				$query->whereIn('qualification_ug', $request->qualification_ug);				
+			}
 
-		if($request->has('qualification_pg')){
-			$query->whereIn('qualification_pg', $request->qualification_pg);				
-		}
+			if($request->has('qualification_pg')){
+				$query->whereIn('qualification_pg', $request->qualification_pg);				
+			}
 
-		if($request->has('notice_period')){
-			$query->whereIn('notice_period', $request->notice_period);				
-		}
+			if($request->has('notice_period')){
+				$query->whereIn('notice_period', $request->notice_period);				
+			}
 
-		$result = $query->groupBy('id')->paginate(10);
-		
-		$data = array();
-		$data = ['html' => static::createHtmlResponse($result), 'result' => $result];
-		return response()->json($data, 200);
+			$result = $query->groupBy('id')->paginate(10);
+			
+			$data = array();
+			$data = ['html' => static::createHtmlResponse($result), 'result' => $result];
+			return response()->json($data, 200);
+		}
+		elseif($search == 'Position'){
+			$query = DB::table('position_view');
+			if($request->has('company_id')){
+				$query->whereIn('company_id', $request->company_id);				
+			}
+
+			if($request->has('location')){
+				$query->whereIn('location', $request->location);				
+			}
+
+			if($request->has('qualification_ug')){
+				$query->whereIn('qualification_ug', $request->qualification_ug);				
+			}
+
+			if($request->has('qualification_pg')){
+				$query->whereIn('qualification_pg', $request->qualification_pg);				
+			}
+
+			if($request->has('req_exp_id')){
+				$query->whereIn('req_exp_id', $request->req_exp_id);				
+			}
+
+			if($request->has('industry_id')){
+				$query->whereIn('industry_id', $request->industry_id);				
+			}
+
+			if($request->has('department_id')){
+				$query->whereIn('department_id', $request->department_id);				
+			}
+
+			if($request->has('sub_department_id')){
+				$query->whereIn('sub_department_id', $request->sub_department_id);				
+			}
+
+			if($request->has('budget_id')){
+				$query->whereIn('budget_id', $request->budget_id);				
+			}
+
+			$result = $query->groupBy('id')->paginate(10);
+			
+			$data = array();
+			$data = ['html' => static::createHtmlPositionResponse($result, $request->id), 'result' => $result];
+			return response()->json($data, 200);
+		}	
 	}
 
 	public function assignCandidate(Request $request){
@@ -163,6 +211,21 @@ class Assign_PositionsController extends Controller
 				]);	
 			}
 		}
+		
+		$posi = Position::find($request->position);
+		$count = count($request->ids);
+		$meesage = $count." New Candidate Assigned to ".$posi->title." ( ".$posi->position_code." ) By ".Auth::user()->name; 
+		$link = url(config('laraadmin.adminRoute') . '/positions/'.$request->position);
+		
+		Admin_Notice::create([
+			'type' => 'Assigned',
+			'message' => $meesage,
+			'link' => $link,
+			'role' => 'ADMIN',
+		]);
+		
+		$data = Admin_Notice::whereNull('read_at')->get();           
+        return $request->session()->put('assigned', $data);
 
 		return response()->json(array('msg' => "Candidate Assigned Successfully"), 200);
 	}
@@ -236,7 +299,7 @@ class Assign_PositionsController extends Controller
 		return $html;
 	}
 
-	public function createHtmlPositionResponse($result)
+	public function createHtmlPositionResponse($result, $candidate_id)
 	{
 		$html = "";
 		foreach($result as $item){
@@ -248,7 +311,13 @@ class Assign_PositionsController extends Controller
 										// if(!empty($item->assigned_position_id)){
 										// 	$html .= "<button class='btn btn-box-tool' data-toggle='tooltip' title='".$item->assigned_position." Position Assigned' data-widget='chat-pane-toggle'><i class='fa fa-comments'></i></button>";	
 										// }
-										$html .= "<span data-toggle='tooltip' title='' class='badge bg-light-blue' data-original-title='Select to Assign'><input class='custom-control-input' id='assignbox' name='assignbox[".$item->id."]' type='checkbox' id='customCheckbox1' value=".$item->id."></span>";
+										$check = Assign_Position::where(['position_id' => $item->id, 'candidate_id' => $candidate_id])->first();
+										if($check){
+											$html .= "<span title='Click Here to Un-assign' onclick='unasignedCandidate(".$item->id.", ".$candidate_id.")' class='btn btn-info btn-xs'>Assigned</span>";
+										}
+										else{
+											$html .= "<span data-toggle='tooltip' title='' class='badge bg-light-blue' data-original-title='Select to Assign'><input class='custom-control-input' id='assignbox' name='assignbox[".$item->id."]' type='checkbox' id='customCheckbox1' value=".$item->id."></span>";
+										}										
 										$html .= "<button type='button' class='btn btn-box-tool' data-widget='collapse'><i class='fa fa-minus'></i></button>"; 
 							$html .= "</div>";
 						$html .= "</div>";
@@ -345,8 +414,16 @@ class Assign_PositionsController extends Controller
 				
 				$data = array();
 				foreach($result as $filter){
-					$data['notice_period'][$filter->notice_period] = $filter->notice_period;
-					
+					$data['company'][$filter->company_id] = $filter->company_title;
+					$data['position_level'][$filter->position_level_title] = $filter->position_level_title;
+					$data['industry'][$filter->industry_id] = $filter->industry_title;
+					$data['department'][$filter->department_id] = $filter->department_title;
+					$data['sub_department'][$filter->sub_department_id] = $filter->sub_department_title;
+					$data['location'][$filter->location] = $filter->cityName;
+					$data['budget'][$filter->budget_id] = $filter->budget_title;
+					$data['qualification_ug'][$filter->qualification_ug] = $filter->under_graduate;
+					$data['qualification_pg'][$filter->qualification_pg] = $filter->post_graduate;
+					$data['experience'][$filter->req_exp_id] = $filter->experience_title;
 				}
 				
 				//return $data['total_experience'];
@@ -553,40 +630,70 @@ class Assign_PositionsController extends Controller
 	 *
 	 * @return
 	 */
-	public function dtajax()
+	public function dtajax_by_positon($id)
 	{
-		$values = DB::table('assign_positions')->select($this->listing_cols)->whereNull('deleted_at');
+		$values = Assign_Position::select($this->candidate_cols)
+									->join('candidates', 'candidates.id', '=','assign_positions.candidate_id')
+									->where('assign_positions.position_id', $id)
+									->whereNull('assign_positions.deleted_at')
+									->get();
 		$out = Datatables::of($values)->make();
 		$data = $out->getData();
 
 		$fields_popup = ModuleFields::getModuleFields('Assign_Positions');
 		
 		for($i=0; $i < count($data->data); $i++) {
-			for ($j=0; $j < count($this->listing_cols); $j++) { 
-				$col = $this->listing_cols[$j];
+			for ($j=0; $j < count($this->candidate_cols); $j++) { 
+				$col = $this->candidate_cols[$j];
 				if($fields_popup[$col] != null && starts_with($fields_popup[$col]->popup_vals, "@")) {
 					$data->data[$i][$j] = ModuleFields::getFieldValue($fields_popup[$col], $data->data[$i][$j]);
 				}
-				if($col == $this->view_col) {
-					$data->data[$i][$j] = '<a href="'.url(config('laraadmin.adminRoute') . '/assign_positions/'.$data->data[$i][0]).'">'.$data->data[$i][$j].'</a>';
+				if($col == 'candidates.name') {
+					$data->data[$i][$j] = '<a href="'.url(config('laraadmin.adminRoute') . '/candidates/'.$data->data[$i][0]).'">'.$data->data[$i][$j].'</a>';
 				}
-				// else if($col == "author") {
-				//    $data->data[$i][$j];
-				// }
 			}
 			
 			if($this->show_action) {
 				$output = '';
-				if(Module::hasAccess("Assign_Positions", "edit")) {
-					$output .= '<a href="'.url(config('laraadmin.adminRoute') . '/assign_positions/'.$data->data[$i][0].'/edit').'" class="btn btn-warning btn-xs" style="display:inline;padding:2px 5px 3px 5px;"><i class="fa fa-edit"></i></a>';
-				}
-				
 				if(Module::hasAccess("Assign_Positions", "delete")) {
-					$output .= Form::open(['route' => [config('laraadmin.adminRoute') . '.assign_positions.destroy', $data->data[$i][0]], 'method' => 'delete', 'style'=>'display:inline']);
-					$output .= ' <button class="btn btn-danger btn-xs" type="submit"><i class="fa fa-times"></i></button>';
-					$output .= Form::close();
+					$output .= '<span class="btn btn-danger btn-xs" onclick="unasignedCandidate('.$data->data[$i][0].', '.$data->data[$i][10].');" >Un-Assign Position</span>';
 				}
-				$data->data[$i][] = (string)$output;
+				$data->data[$i][10] = (string)$output;
+			}
+		}
+		$out->setData($data);
+		return $out;
+	}
+	
+	public function dtajax_by_candidate($id)
+	{
+		$values = Assign_Position::select($this->position_cols)
+									->join('position_view', 'position_view.id', '=','assign_positions.position_id')
+									->where('assign_positions.candidate_id', $id)
+									->whereNull('assign_positions.deleted_at')
+									->get();
+		$out = Datatables::of($values)->make();
+		$data = $out->getData();
+
+		$fields_popup = ModuleFields::getModuleFields('Assign_Positions');
+		
+		for($i=0; $i < count($data->data); $i++) {
+			for ($j=0; $j < count($this->position_cols); $j++) { 
+				$col = $this->position_cols[$j];
+				if($fields_popup[$col] != null && starts_with($fields_popup[$col]->popup_vals, "@")) {
+					$data->data[$i][$j] = ModuleFields::getFieldValue($fields_popup[$col], $data->data[$i][$j]);
+				}
+				if($col == 'position_view.position_code') {
+					$data->data[$i][$j] = '<a href="'.url(config('laraadmin.adminRoute') . '/positions/'.$data->data[$i][0]).'">'.$data->data[$i][$j].'</a>';
+				}
+			}
+			
+			if($this->show_action) {
+				$output = '';
+				if(Module::hasAccess("Assign_Positions", "delete")) {
+					$output .= '<span class="btn btn-danger btn-xs" onclick="unasignedCandidate('.$data->data[$i][0].' , '.$id.');" >Un-Assign Position</span>';
+				}
+				$data->data[$i][10] = (string)$output;
 			}
 		}
 		$out->setData($data);

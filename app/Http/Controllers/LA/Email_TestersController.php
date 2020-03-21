@@ -90,7 +90,7 @@ class Email_TestersController extends Controller
 			if(parent::CanEmailSend())
 			{
 				Mail::send('emails.send_test', ['email'=>'tester@admin.com'], function ($m) use ($request) {
-					//$m->from(Setting::getByKey('Email_From'), Setting::getByKey('Email_From_Alias'));
+					$m->from(Setting::getByKey('Email_From'), Setting::getByKey('Email_From_Alias'));
 					$m->to($request->to, '')->subject("Email tester");
 				});
 			}

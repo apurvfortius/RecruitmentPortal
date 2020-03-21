@@ -11,14 +11,22 @@ use Illuminate\Foundation\Auth\Access\AuthorizesResources;
 use App\Models\Country;
 use App\Models\State;
 use App\Models\City;
+use App\Models\Admin_Notice;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, AuthorizesResources, DispatchesJobs, ValidatesRequests;
+    
+    public function checkNotification()
+    {
+        $data = Admin_Notice::whereNull('read_at')->get();           
+        session(['key' => $data]);
+    }
 
     public function CanEmailSend()
     {
-        return env('MAIL_USERNAME') != null && env('MAIL_USERNAME') != "null" && env('MAIL_USERNAME') != "";
+        $var = \config('mail.username');
+        return $var != null && $var != "null" && $var != "";
     }
 
     public function getCountryID($name)

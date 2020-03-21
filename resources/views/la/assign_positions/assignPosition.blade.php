@@ -47,18 +47,27 @@
 						<div class="tab-pane" id="tab_2">
 							<form name="advance_search" id="advance_search">
 								<div class="form-group">
-									<label>City</label>
-									<select class="form-control" name="city[]" id="e2_1" style="width: 100%;">
-										@foreach ($data['city'] as $key => $item)
+									<label>Company</label>
+									<select class="form-control" name="company_id[]" id="e2_1" style="width: 100%;">
+										@foreach ($data['company'] as $key => $item)
 												<option value="{{ $key }}">{{ $item }}</option>	
 											@endforeach 
 									</select>
 								</div>
 
 								<div class="form-group">
-									<label>Total Experience</label>
-									<select class="form-control" name="total_experience[]" id="e2_2" data-placeholder="" style="width: 100%;">
-										@foreach ($data['total_experience'] as $key => $item)
+									<label>City</label>
+									<select class="form-control" name="location[]" id="e2_6" style="width: 100%;">
+										@foreach ($data['location'] as $key => $item)
+												<option value="{{ $key }}">{{ $item }}</option>	
+											@endforeach 
+									</select>
+								</div>
+
+								<div class="form-group">
+									<label>Required Experience</label>
+									<select class="form-control" name="req_exp_id[]" id="e2_2" data-placeholder="" style="width: 100%;">
+										@foreach ($data['experience'] as $key => $item)
 											<option value="{{ $key }}">{{ $item }}</option>	
 										@endforeach 
 									</select>
@@ -83,9 +92,36 @@
 								</div>
 
 								<div class="form-group">
-									<label>Notice Period</label>
-									<select class="form-control" name="notice_period[]" id="e2_5" data-placeholder="" style="width: 100%;">
-										@foreach ($data['notice_period'] as $key => $item)
+									<label>Industry</label>
+									<select class="form-control" name="industry_id[]" id="e2_5" data-placeholder="" style="width: 100%;">
+										@foreach ($data['industry'] as $key => $item)
+											<option value="{{ $key }}">{{ $item }}</option>	
+										@endforeach 
+									</select>
+								</div>
+
+								<div class="form-group">
+									<label>Department</label>
+									<select class="form-control" name="department_id[]" id="e2_7" data-placeholder="" style="width: 100%;">
+										@foreach ($data['department'] as $key => $item)
+											<option value="{{ $key }}">{{ $item }}</option>	
+										@endforeach 
+									</select>
+								</div>
+
+								<div class="form-group">
+									<label>Industry</label>
+									<select class="form-control" name="sub_department_id[]" id="e2_8" data-placeholder="" style="width: 100%;">
+										@foreach ($data['sub_department'] as $key => $item)
+											<option value="{{ $key }}">{{ $item }}</option>	
+										@endforeach 
+									</select>
+								</div>
+
+								<div class="form-group">
+									<label>Industry</label>
+									<select class="form-control" name="budget_id[]" id="e2_9" data-placeholder="" style="width: 100%;">
+										@foreach ($data['budget'] as $key => $item)
 											<option value="{{ $key }}">{{ $item }}</option>	
 										@endforeach 
 									</select>
@@ -170,6 +206,26 @@
 		allowClear: true,
 		multiple: true,
 	});
+	$("#e2_6").select2({
+		placeholder: "Select a notice Period",
+		allowClear: true,
+		multiple: true,
+	});
+	$("#e2_7").select2({
+		placeholder: "Select a notice Period",
+		allowClear: true,
+		multiple: true,
+	});
+	$("#e2_8").select2({
+		placeholder: "Select a notice Period",
+		allowClear: true,
+		multiple: true,
+	});
+	$("#e2_9").select2({
+		placeholder: "Select a notice Period",
+		allowClear: true,
+		multiple: true,
+	});
 
 	
 	var next = '';
@@ -238,6 +294,7 @@
 			success: function (data) { 
 				$('#message').css('display', '');
 				$('#message label').html(data.msg);
+				hideAlert();
 			}
 		});
 	}
@@ -250,6 +307,7 @@
 			success: function (data) { 
 				$('#message').css('display', '');
 				$('#message label').html(data.msg);
+				hideAlert();
 			}
 		});
 	}
@@ -260,5 +318,12 @@
 			getList(form, '/admin/getAdvanceSearch/Position', 'advance');
 		});
 	});
+
+	function hideAlert() {
+		$("#message").fadeTo(2000, 500).slideUp(500, function() {
+			$("#message").slideUp(500);
+			$('#message').css('display', 'none');
+		});
+	}
 </script>
 @endpush

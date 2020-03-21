@@ -23,14 +23,14 @@
 				</button>
 			</div>
 			@include('la.layouts.partials.top_nav_menu')
-			@include('la.layouts.partials.notifs')
+			{{-- @include('la.layouts.partials.notifs') --}}
 		</div><!-- /.container-fluid -->
 	@else
 		<!-- Sidebar toggle button-->
 		<a href="#" class="sidebar-toggle b-l" data-toggle="offcanvas" role="button">
 			<span class="sr-only">Toggle navigation</span>
 		</a>
-		@include('la.layouts.partials.notifs')
+		{{-- @include('la.layouts.partials.notifs') --}}
 	@endif
 	
 	</nav>

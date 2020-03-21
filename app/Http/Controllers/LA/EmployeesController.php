@@ -156,11 +156,11 @@ class EmployeesController extends Controller
 			$user->detachRoles();
 			$role = Role::find($request->role);
 			$user->attachRole($role);
-
+			
 			if(parent::CanEmailSend()) {
 				// Send mail to User his Password
 				Mail::send('emails.send_login_cred', ['user' => $user], function ($m) use ($user) {
-					$m->from(env('MAIL_FROM'), 'LaraAdmin');
+					$m->from(\config('mail.from_address'), \config('mail.from_name'));
 					$m->to($user->email, $user->name)->subject(Setting::getByKey('NewUserMessage'));
 				});
 			}

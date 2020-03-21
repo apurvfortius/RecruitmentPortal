@@ -33,6 +33,7 @@
 			@foreach( $listing_cols as $col )
 			<th>{{ $module->fields[$col]['label'] or ucfirst($col) }}</th>
 			@endforeach
+			<th>Assigned Position</th>
 			@if($show_actions)
 			<th>Actions</th>
 			@endif

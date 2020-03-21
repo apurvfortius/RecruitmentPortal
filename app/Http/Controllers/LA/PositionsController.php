@@ -18,22 +18,27 @@ use Dwij\Laraadmin\Models\Module;
 use Dwij\Laraadmin\Models\ModuleFields;
 
 use App\Models\Position;
+use App\Models\Assign_Position;
 
 class PositionsController extends Controller
 {
 	public $show_action = true;
 	public $view_col = 'title';
-	public $listing_cols = ['id', 'position_code', 'company_id', 'title', 'position_level', 'industry_id', 'department_id', 'sub_department_id', 'report_to', 'team_size', 'location', 'budget_id', 'qualification_ug', 'qualification_pg', 'no_position', 'req_exp_id', 'urgency_pos', 'buy_out', 'com_turnover', 'emp_strength', 'jd_available', 'website', 'pos_date', 'job_description', 'pos_given_by', 'pos_assign_to', 'created_by', 'last_edited_by'];
+	public $listing_cols = ['id', 'position_code', 'company_id', 'title', 'position_level', 'no_position', 'jd_available', 'website', 'pos_date', 'job_description'];
+
+	public $candidate_cols = ['id', 'name', 'city', 'total_experience', 'crrnt_ctc', 'expected_ctc', 'notice_period', 'mobile_1', 'email_1', 'skype'];
 	
 	public function __construct() {
 		// Field Access of Listing Columns
 		if(\Dwij\Laraadmin\Helpers\LAHelper::laravel_ver() == 5.3) {
 			$this->middleware(function ($request, $next) {
 				$this->listing_cols = ModuleFields::listingColumnAccessScan('Positions', $this->listing_cols);
+				$this->candidate_cols = ModuleFields::listingColumnAccessScan('Candidates', $this->candidate_cols);
 				return $next($request);
 			});
 		} else {
 			$this->listing_cols = ModuleFields::listingColumnAccessScan('Positions', $this->listing_cols);
+			$this->candidate_cols = ModuleFields::listingColumnAccessScan('Candidates', $this->candidate_cols);
 		}
 	}
 	
@@ -135,18 +140,20 @@ class PositionsController extends Controller
 	public function show($id)
 	{
 		if(Module::hasAccess("Positions", "view")) {
-			
 			$position = Position::find($id);
 			if(isset($position->id)) {
 				$module = Module::get('Positions');
 				$module->row = $position;
-				
+				$candidate_module = Module::get('Candidates');
+							
 				return view('la.positions.show', [
 					'module' => $module,
 					'view_col' => $this->view_col,
 					'no_header' => true,
-					'no_padding' => "no-padding"
-				])->with('position', $position);
+					'no_padding' => "no-padding",
+					'candidate_cols' => $this->candidate_cols,
+					'candidate_module' => $candidate_module,
+				])->with(['position' =>  $position]);
 			} else {
 				return view('errors.404', [
 					'record_id' => $id,
@@ -250,16 +257,15 @@ class PositionsController extends Controller
 		for($i=0; $i < count($data->data); $i++) {
 			for ($j=0; $j < count($this->listing_cols); $j++) { 
 				$col = $this->listing_cols[$j];
-				if($fields_popup[$col] != null && starts_with($fields_popup[$col]->popup_vals, "@")) {
+				if($fields_popup[$col] != null && starts_with($fields_popup[$col]->popup_vals, "@" && $col !== "assigned_candidate")) {
 					$data->data[$i][$j] = ModuleFields::getFieldValue($fields_popup[$col], $data->data[$i][$j]);
 				}
 				if($col == $this->view_col) {
 					$data->data[$i][$j] = '<a href="'.url(config('laraadmin.adminRoute') . '/positions/'.$data->data[$i][0]).'">'.$data->data[$i][$j].'</a>';
 				}
-				// else if($col == "author") {
-				//    $data->data[$i][$j];
-				// }
 			}
+			$res = Assign_Position::where('position_id', $data->data[$i][0])->count();					
+			$data->data[$i][] = $res;
 			
 			if($this->show_action) {
 				$output = '';

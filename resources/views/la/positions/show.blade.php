@@ -134,6 +134,23 @@
 						@la_display($module, 'pos_assign_to')
 						@la_display($module, 'created_by')
 						@la_display($module, 'last_edited_by')
+
+						<div class="form-group">
+							<div class="col-md-12 fvalue">
+								<table id="example1" class="table table-bordered">
+									<thead>
+										<tr class="success">
+											@foreach( $candidate_cols as $col )
+											<th>{{ $candidate_module->fields[$col]['label'] or ucfirst($col) }}</th>
+											@endforeach
+											<th>Actions</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -238,3 +255,48 @@
 	</div>
 </div>
 @endsection
+
+@push('scripts')
+	<script>
+		function unasignedCandidate(position, candidate) {
+			$.ajax({
+				url: '/admin/unassignCandidate',
+				type: 'POST',
+				data: { "_token": "{{ csrf_token() }}", 'position': position, 'candidate': candidate },
+				success: function (data) {
+					if(data.status == 'Success'){
+						alert('Candidate Un-Assigned Successfully');
+						location.reload();
+					}
+					else if(data.status == 'Fail'){
+						alert('Candidate Un-Assigned Fail');
+					}
+					else{
+						alert('Something Wrong');
+					}					
+				}
+			});
+		}
+	</script>
+	<script src="{{ asset('la-assets/plugins/datatables/datatables.min.js') }}"></script>
+	<script>
+	$(function () {
+		$("#example1").DataTable({
+			processing: true,
+			serverSide: true,
+			ajax: "{{ url(config('laraadmin.adminRoute') . '/dtajax_by_positon') }}/{{ $position->id }}",
+			language: {
+				lengthMenu: "_MENU_",
+				search: "_INPUT_",
+				searchPlaceholder: "Search"
+			},
+			@if($show_actions)
+			columnDefs: [ { orderable: false, targets: [-1] }],
+			@endif
+		});
+		$("#position-add-form").validate({
+			
+		});
+	});
+	</script>
+@endpush
