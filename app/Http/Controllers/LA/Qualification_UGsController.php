@@ -35,6 +35,7 @@ class Qualification_UGsController extends Controller
 		} else {
 			$this->listing_cols = ModuleFields::listingColumnAccessScan('Qualification_UGs', $this->listing_cols);
 		}
+		parent::checkNotification();
 	}
 	
 	/**

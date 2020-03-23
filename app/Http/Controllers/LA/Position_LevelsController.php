@@ -76,6 +76,7 @@ class Position_LevelsController extends Controller
 		} else {
 			return redirect(config('laraadmin.adminRoute')."/");
 		}
+		parent::checkNotification();
 	}
 
 	/**

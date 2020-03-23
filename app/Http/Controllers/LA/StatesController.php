@@ -35,6 +35,7 @@ class StatesController extends Controller
 		} else {
 			$this->listing_cols = ModuleFields::listingColumnAccessScan('States', $this->listing_cols);
 		}
+		parent::checkNotification();
 	}
 	
 	/**

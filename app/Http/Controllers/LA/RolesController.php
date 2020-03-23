@@ -37,6 +37,7 @@ class RolesController extends Controller
 		} else {
 			$this->listing_cols = ModuleFields::listingColumnAccessScan('Roles', $this->listing_cols);
 		}
+		parent::checkNotification();
 	}
 	
 	/**

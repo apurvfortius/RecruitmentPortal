@@ -59,7 +59,8 @@ class PositionsController extends Controller
 			]);
 		} else {
             return redirect(config('laraadmin.adminRoute')."/");
-        }
+		}
+		parent::checkNotification();
 	}
 
 	/**

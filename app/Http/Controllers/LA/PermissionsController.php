@@ -38,6 +38,7 @@ class PermissionsController extends Controller
 		} else {
 			$this->listing_cols = ModuleFields::listingColumnAccessScan('Permissions', $this->listing_cols);
 		}
+		parent::checkNotification();
 	}
 	
 	/**

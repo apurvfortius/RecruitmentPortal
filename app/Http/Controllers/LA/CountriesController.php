@@ -35,6 +35,7 @@ class CountriesController extends Controller
 		} else {
 			$this->listing_cols = ModuleFields::listingColumnAccessScan('Countries', $this->listing_cols);
 		}
+		parent::checkNotification();
 	}
 	
 	/**

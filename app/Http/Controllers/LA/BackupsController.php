@@ -37,6 +37,7 @@ class BackupsController extends Controller
 		} else {
 			$this->listing_cols = ModuleFields::listingColumnAccessScan('Backups', $this->listing_cols);
 		}
+		parent::checkNotification();
 	}
 	
 	/**

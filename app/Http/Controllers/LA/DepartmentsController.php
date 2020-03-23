@@ -35,6 +35,7 @@ class DepartmentsController extends Controller
 		} else {
 			$this->listing_cols = ModuleFields::listingColumnAccessScan('Departments', $this->listing_cols);
 		}
+		parent::checkNotification();
 	}
 	
 	/**

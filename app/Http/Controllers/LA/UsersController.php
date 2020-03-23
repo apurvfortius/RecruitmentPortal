@@ -35,6 +35,7 @@ class UsersController extends Controller
 		} else {
 			$this->listing_cols = ModuleFields::listingColumnAccessScan('Users', $this->listing_cols);
 		}
+		parent::checkNotification();
 	}
 	
 	/**

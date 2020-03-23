@@ -44,6 +44,7 @@ class CandidatesController extends Controller
 			$this->listing_cols = ModuleFields::listingColumnAccessScan('Candidates', $this->listing_cols);
 			$this->listing_cols2 = ModuleFields::listingColumnAccessScan('Candidate_Experiences', $this->listing_cols2);
 		}
+		parent::checkNotification();
 	}
 	
 	/**

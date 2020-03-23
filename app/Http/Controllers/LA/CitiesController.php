@@ -35,6 +35,7 @@ class CitiesController extends Controller
 		} else {
 			$this->listing_cols = ModuleFields::listingColumnAccessScan('Cities', $this->listing_cols);
 		}
+		parent::checkNotification();
 	}
 	
 	/**

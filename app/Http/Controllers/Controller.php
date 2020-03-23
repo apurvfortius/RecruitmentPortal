@@ -19,8 +19,8 @@ class Controller extends BaseController
     
     public function checkNotification()
     {
-        $data = Admin_Notice::whereNull('read_at')->get();           
-        session(['key' => $data]);
+        $data = Admin_Notice::whereNull('read_at')->get();
+        session()->put('assigned', $data);
     }
 
     public function CanEmailSend()

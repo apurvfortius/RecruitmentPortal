@@ -35,6 +35,7 @@ class SettingsController extends Controller
 		} else {
 			$this->listing_cols = ModuleFields::listingColumnAccessScan('Settings', $this->listing_cols);
 		}
+		
 	}
 	
 	/**

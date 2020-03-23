@@ -5,7 +5,7 @@
 @endsection
 
 
-@section('main-content')
+@section('main-content') 
 <div id="page-content" class="profile2">
 	<div class="bg-primary clearfix">
 		<div class="col-md-4">

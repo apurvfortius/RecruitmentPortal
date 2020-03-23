@@ -35,6 +35,7 @@ class MessagesController extends Controller
 		} else {
 			$this->listing_cols = ModuleFields::listingColumnAccessScan('Messages', $this->listing_cols);
 		}
+		parent::checkNotification();
 	}
 	
 	/**

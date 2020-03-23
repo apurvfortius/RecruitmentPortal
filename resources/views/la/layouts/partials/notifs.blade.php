@@ -39,20 +39,22 @@
 				<!-- Notifications Menu -->
 				<li class="dropdown notifications-menu">
 					<!-- Menu toggle button -->
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+					<a href="#" class="dropdown-toggle" @if(session()->has('assigned'))  data-toggle="dropdown" @endif>
 						<i class="fa fa-bell-o"></i>
-						<span class="label label-warning">{{ count($request->session()->get('assigned')) }}</span>
+						<span class="label label-warning">@if(session()->has('assigned')) {{ count(session()->get('assigned')) }} @endif</span>
 					</a>
 					<ul class="dropdown-menu">
-						<li class="header">Apurv You have 10 notifications</li>
+						<li class="header">You have {{ count(session()->get('assigned')) }} notifications</li>
 						<li>
 							<!-- Inner Menu: contains the notifications -->
 							<ul class="menu">
-								<li><!-- start notification -->
-									<a href="#">
-										<i class="fa fa-users text-aqua"></i>  new members joined today
+								@foreach(session()->get('assigned') as $item)<!-- start notification -->
+								<li>
+									<a href="{{ url($item->link) }}">
+										<i class="fa fa-users text-aqua"></i>  {{ $item->message }}
 									</a>
-								</li><!-- end notification -->
+								</li>
+								@endforeach<!-- end notification -->
 							</ul>
 						</li>
 						<li class="footer"><a href="#">View all</a></li>

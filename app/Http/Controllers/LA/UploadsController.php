@@ -46,6 +46,7 @@ class UploadsController extends Controller
 			}
 		}
 		$this->listing_cols = $listing_cols_temp;
+		parent::checkNotification();
 	}
 	
 	/**

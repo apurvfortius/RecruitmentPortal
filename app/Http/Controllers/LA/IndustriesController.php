@@ -35,6 +35,7 @@ class IndustriesController extends Controller
 		} else {
 			$this->listing_cols = ModuleFields::listingColumnAccessScan('Industries', $this->listing_cols);
 		}
+		parent::checkNotification();
 	}
 	
 	/**

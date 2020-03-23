@@ -35,6 +35,7 @@ class BudgetsController extends Controller
 		} else {
 			$this->listing_cols = ModuleFields::listingColumnAccessScan('Budgets', $this->listing_cols);
 		}
+		parent::checkNotification();
 	}
 	
 	/**

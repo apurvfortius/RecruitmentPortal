@@ -41,8 +41,7 @@ class Assign_PositionsController extends Controller
 		} else {
 			//$this->listing_cols = ModuleFields::listingColumnAccessScan('Candidates', $this->listing_cols);
 		}
-		$data = Admin_Notice::whereNull('read_at')->get();           
-        session(['key' => $data]);
+		parent::checkNotification();
 	}
 
 	//below methods used by position module
@@ -215,7 +214,7 @@ class Assign_PositionsController extends Controller
 		$posi = Position::find($request->position);
 		$count = count($request->ids);
 		$meesage = $count." New Candidate Assigned to ".$posi->title." ( ".$posi->position_code." ) By ".Auth::user()->name; 
-		$link = url(config('laraadmin.adminRoute') . '/positions/'.$request->position);
+		$link = 'admin/positions/'.$request->position;
 		
 		Admin_Notice::create([
 			'type' => 'Assigned',
@@ -224,8 +223,7 @@ class Assign_PositionsController extends Controller
 			'role' => 'ADMIN',
 		]);
 		
-		$data = Admin_Notice::whereNull('read_at')->get();           
-        return $request->session()->put('assigned', $data);
+		parent::checkNotification();
 
 		return response()->json(array('msg' => "Candidate Assigned Successfully"), 200);
 	}
@@ -655,6 +653,9 @@ class Assign_PositionsController extends Controller
 			
 			if($this->show_action) {
 				$output = '';
+				if(Auth::user()) {
+					$output .= '<span class="btn btn-danger btn-xs" onclick="unasignedCandidate('.$data->data[$i][0].', '.$data->data[$i][10].');" >Un-Assign Position</span>';
+				}
 				if(Module::hasAccess("Assign_Positions", "delete")) {
 					$output .= '<span class="btn btn-danger btn-xs" onclick="unasignedCandidate('.$data->data[$i][0].', '.$data->data[$i][10].');" >Un-Assign Position</span>';
 				}

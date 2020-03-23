@@ -43,6 +43,7 @@ class EmployeesController extends Controller
 		} else {
 			$this->listing_cols = ModuleFields::listingColumnAccessScan('Employees', $this->listing_cols);
 		}
+		parent::checkNotification();
 	}
 	
 	/**

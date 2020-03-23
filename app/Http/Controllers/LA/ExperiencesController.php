@@ -35,6 +35,7 @@ class ExperiencesController extends Controller
 		} else {
 			$this->listing_cols = ModuleFields::listingColumnAccessScan('Experiences', $this->listing_cols);
 		}
+		parent::checkNotification();
 	}
 	
 	/**
