@@ -298,5 +298,33 @@
 			
 		});
 	});
+
+	function approveCandidate(candidate, position) {
+		$.ajax({
+			url: '/admin/approveCandidate',
+			type: 'POST',
+			data: { "_token": "{{ csrf_token() }}", 'position': position, 'candidate': candidate },
+			success: function (data) { 
+				$('#message').css('display', '');
+				$('#message label').html(data.msg);
+
+				hideAlert();
+			}
+		});
+	}
+
+	function rejectCandidate(candidate, position) {
+		$.ajax({
+			url: '/admin/rejectCandidate',
+			type: 'POST',
+			data: { "_token": "{{ csrf_token() }}", 'position': position, 'candidate': candidate },
+			success: function (data) { 
+				$('#message').css('display', '');
+				$('#message label').html(data.msg);
+
+				hideAlert();
+			}
+		});
+	}
 	</script>
 @endpush

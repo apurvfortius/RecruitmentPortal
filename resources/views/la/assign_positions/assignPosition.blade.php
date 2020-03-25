@@ -319,11 +319,11 @@
 		});
 	});
 
-	function hideAlert() {
-		$("#message").fadeTo(2000, 500).slideUp(500, function() {
-			$("#message").slideUp(500);
-			$('#message').css('display', 'none');
-		});
-	}
+	// function hideAlert() {
+	// 	$("#message").fadeTo(2000, 500).slideUp(500, function() {
+	// 		$("#message").slideUp(500);
+	// 		$('#message').css('display', 'none');
+	// 	});
+	// }
 </script>
 @endpush

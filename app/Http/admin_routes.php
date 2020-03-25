@@ -6,9 +6,9 @@ Route::get('/home', 'HomeController@index');
 Route::auth();
 Route::get('/verify/{email}/token/{token}','Auth\AuthController@varify');
 Route::post('/verify','Auth\AuthController@varifypost');
-Route::post('/2fa', function () {
-    return redirect(URL()->previous());
-})->name('2fa')->middleware('2fa');
+// Route::post('/2fa', function () {
+//     return redirect(URL()->previous());
+// })->name('2fa')->middleware('2fa');
 
 /* ================== Access Uploaded Files ================== */
 Route::get('files/{hash}/{name}', 'LA\UploadsController@get_file');
@@ -27,7 +27,7 @@ if(\Dwij\Laraadmin\Helpers\LAHelper::laravel_ver() == 5.3) {
 	Route::get('/logout', 'Auth\LoginController@logout');
 }
 
-Route::group(['as' => $as, 'middleware' => ['auth', '2fa', 'permission:ADMIN_PANEL']], function () {
+Route::group(['as' => $as, 'middleware' => ['auth', 'permission:ADMIN_PANEL']], function () {
 	
 	/* ================== Dashboard ================== */
 	
@@ -177,6 +177,9 @@ Route::group(['as' => $as, 'middleware' => ['auth', '2fa', 'permission:ADMIN_PAN
 	Route::post(config('laraadmin.adminRoute') . '/getAdvanceSearch/{search}', 'LA\Assign_PositionsController@getAdvanceSearch');
 	Route::post(config('laraadmin.adminRoute') . '/assignCandidate', 'LA\Assign_PositionsController@assignCandidate');
 	Route::post(config('laraadmin.adminRoute') . '/unassignCandidate', 'LA\Assign_PositionsController@unassignCandidate');
+
+	Route::post(config('laraadmin.adminRoute') . '/approveCandidate', 'LA\Assign_PositionsController@approveCandidate');
+	Route::post(config('laraadmin.adminRoute') . '/rejectCandidate', 'LA\Assign_PositionsController@rejectCandidate');
 
 	Route::get(config('laraadmin.adminRoute') . '/assign_position/{id}', 'LA\Assign_PositionsController@showAssignPositionPage');
 	Route::post(config('laraadmin.adminRoute') . '/assignPosition', 'LA\Assign_PositionsController@assignPosition');

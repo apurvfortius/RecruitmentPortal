@@ -21,6 +21,10 @@ use App\Models\Assign_Position;
 use App\Models\Position;
 use App\Models\Candidate;
 use App\Models\Admin_Notice;
+use App\Models\Company;
+use App\Models\Upload;
+use Mail;
+use App\Models\Setting;
 
 class Assign_PositionsController extends Controller
 {
@@ -240,6 +244,20 @@ class Assign_PositionsController extends Controller
 				]);	
 			}
 		}
+
+		$posi = Candidate::find($request->candidate);
+		$count = count($request->ids);
+		$meesage = $count." New Positions Assigned to ".$posi->name." By ".Auth::user()->name; 
+		$link = 'admin/candidates/'.$request->candidate;
+		
+		Admin_Notice::create([
+			'type' => 'Assigned',
+			'message' => $meesage,
+			'link' => $link,
+			'role' => 'ADMIN',
+		]);
+		
+		parent::checkNotification();
 
 		return response()->json(array('msg' => "Position Assigned Successfully"), 200);
 	}
@@ -634,6 +652,8 @@ class Assign_PositionsController extends Controller
 									->join('candidates', 'candidates.id', '=','assign_positions.candidate_id')
 									->where('assign_positions.position_id', $id)
 									->whereNull('assign_positions.deleted_at')
+									->whereNull('assign_positions.rejected_at')
+									->whereNull('assign_positions.approved_at')
 									->get();
 		$out = Datatables::of($values)->make();
 		$data = $out->getData();
@@ -653,8 +673,9 @@ class Assign_PositionsController extends Controller
 			
 			if($this->show_action) {
 				$output = '';
-				if(Auth::user()) {
-					$output .= '<span class="btn btn-danger btn-xs" onclick="unasignedCandidate('.$data->data[$i][0].', '.$data->data[$i][10].');" >Un-Assign Position</span>';
+				if(Auth::user()->hasRole('SUPER_ADMIN') || Auth::user()->hasRole('ADMIN')) {
+					$output .= '<span class="btn btn-success btn-xs" onclick="approveCandidate('.$data->data[$i][0].', '.$data->data[$i][10].');" >Approve & Send Mail</span>';
+					$output .= '<span class="btn btn-danger btn-xs" onclick="rejectCandidate('.$data->data[$i][0].', '.$data->data[$i][10].');" >Reject</span>';
 				}
 				if(Module::hasAccess("Assign_Positions", "delete")) {
 					$output .= '<span class="btn btn-danger btn-xs" onclick="unasignedCandidate('.$data->data[$i][0].', '.$data->data[$i][10].');" >Un-Assign Position</span>';
@@ -672,6 +693,9 @@ class Assign_PositionsController extends Controller
 									->join('position_view', 'position_view.id', '=','assign_positions.position_id')
 									->where('assign_positions.candidate_id', $id)
 									->whereNull('assign_positions.deleted_at')
+									->whereNull('assign_positions.rejected_at')
+									->whereNull('assign_positions.approved_at')
+									->groupBY('position_view.id')
 									->get();
 		$out = Datatables::of($values)->make();
 		$data = $out->getData();
@@ -691,6 +715,10 @@ class Assign_PositionsController extends Controller
 			
 			if($this->show_action) {
 				$output = '';
+				if(Auth::user()->hasRole('SUPER_ADMIN') || Auth::user()->hasRole('ADMIN')) {
+					$output .= '<span class="btn btn-success btn-xs" onclick="approveCandidate('.$data->data[$i][0].', '.$id.');" >Approve & Send Mail</span>';
+					$output .= '<span class="btn btn-danger btn-xs" onclick="rejectCandidate('.$data->data[$i][0].', '.$id.');" >Reject</span>';
+				}
 				if(Module::hasAccess("Assign_Positions", "delete")) {
 					$output .= '<span class="btn btn-danger btn-xs" onclick="unasignedCandidate('.$data->data[$i][0].' , '.$id.');" >Un-Assign Position</span>';
 				}
@@ -699,5 +727,40 @@ class Assign_PositionsController extends Controller
 		}
 		$out->setData($data);
 		return $out;
+	}
+	
+	public function approveCandidate(Request $request)
+	{
+		$query = Assign_Position::where(['position_id' => $request->position, 'candidate_id' => $request->candidate])
+					->update(['approved_at' => \Carbon\Carbon::now(), 'approved_by' => Auth::user()->id ]);
+		if($query){
+			if(parent::CanEmailSend()) {
+				$company = DB::table('position_view')->where('id', $request->position)->get();
+				$candidate = Candidate::find($request->candidate);
+				$file = Upload::find($candidate->resume);
+				Mail::send('emails.admin_approve_mail', ['company' => $company, 'candidate' => $candidate, 'body' => Setting::getByKey('Candidate_Approve_Body')], function ($m) use ($user, $company, $file) {
+					$m->from(\config('mail.from_address'), \config('mail.from_name'));
+					$m->to($company[0]->company_email, $company[0]->company_title)->subject(Setting::getByKey('Candidate_Approve'));
+					$m->attach($file->path);
+				});
+			}
+
+			return response()->json(['status' => 'Success', 'msg' => 'Successfully Updated'], 200);
+		}
+		else{
+			return response()->json(['status' => 'Fail', 'msg' => 'Error'], 200);
+		}
+	}
+
+	public function rejectCandidate(Request $request)
+	{
+		$query = Assign_Position::where(['position_id' => $request->position, 'candidate_id' => $request->candidate])
+					->update(['rejected_at' => \Carbon\Carbon::now(), 'rejected_by' => Auth::user()->id ]);
+		if($query){
+			return response()->json(['status' => 'Success', 'msg' => 'Successfully Updated'], 200);
+		}
+		else{
+			return response()->json(['status' => 'Fail', 'msg' => 'Error'], 200);
+		}
 	}
 }

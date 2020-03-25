@@ -18,10 +18,16 @@
 <script src="{{ asset('la-assets/plugins/slimScroll/jquery.slimscroll.min.js') }}" type="text/javascript"></script>
 
 
-
+<script>
+      function hideAlert() {
+		$("#message").fadeTo(2000, 500).slideUp(500, function() {
+			$("#message").slideUp(500);
+			$('#message').css('display', 'none');
+		});
+	}
+</script>
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
       Both of these plugins are recommended to enhance the
       user experience. Slimscroll is required when using the
       fixed layout. -->
-
 @stack('scripts')
